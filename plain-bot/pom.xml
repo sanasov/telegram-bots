@@ -38,7 +38,42 @@
 
 
     <dependencies>
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots</artifactId>
+            <version>2.4.4.5</version>
+        </dependency>
+<!--OWM-->
+        <!--<dependency>-->
+            <!--<groupId>org.bitpipeline.lib</groupId>-->
+            <!--<artifactId>owm-lib</artifactId>-->
+            <!--<version>2.1.3-SNAPSHOT</version>-->
+        <!--</dependency>-->
 
+        <!--<dependency>-->
+            <!--<groupId>org.apache.httpcomponents</groupId>-->
+            <!--<artifactId>httpclient</artifactId>-->
+            <!--<version>4.2.3</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.json</groupId>-->
+            <!--<artifactId>json</artifactId>-->
+            <!--<version>20090211</version>-->
+        <!--</dependency>-->
+<!--YAHOO-->
+        <dependency>
+            <groupId>com.github.fedy2</groupId>
+            <artifactId>yahoo-weather-java-api</artifactId>
+            <version>2.0.2</version>
+        </dependency>
     </dependencies>
 
+
+    <repositories>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
+        </repository>
+    </repositories>
 </project>
