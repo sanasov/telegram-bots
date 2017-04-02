@@ -16,6 +16,7 @@
 
   <modules>
     <module>plain-bot</module>
+    <module>movie-bot</module>
   </modules>
 
   <dependencies>
