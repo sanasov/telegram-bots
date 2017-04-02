@@ -84,7 +84,7 @@ public class BotMovieBot extends TelegramLongPollingBot {
             conversation.setStatus(ConversationStatus.WAITING_FOR_MOVIE);
             responseMessage = "Введите название фильма на английском";
         } else {
-            responseMessage = omdbService.getMovie(incomingMessage).toString();
+            responseMessage = omdbService.getMovie(incomingMessage)!=null? omdbService.getMovie(incomingMessage).toString() : "Фильм не найден. Название фильма должно содержать латинские буквы";
             conversation.setStatus(ConversationStatus.COMPLETED);
         }
 

@@ -294,4 +294,33 @@ public class Movie {
     public void setResponse(String response) {
         this.response = response;
     }
+
+    @Override
+    public String toString() {
+        return
+                "Название фильма: " + title + "\n" +
+                "Год: " + year + "\n" +
+                "рейтинг MPAA: " + rated + "\n" +
+                "Released: " + released + "\n" +
+                "Время: " + runtime + "\n" +
+                "Жанр: " + genre + "\n" +
+                "Режиссер: " + director + "\n" +
+                "Сценарий: " + writer + "\n" +
+                "В главных ролях: " + actors + "\n" +
+                "Сюжет: " + plot + "\n" +
+                "Язык: " + language + "\n" +
+                "Страна: " + country + "\n" +
+                "Награды: " + awards + "\n" +
+                "Poster: " + poster + "\n" +
+//                "Ratings=" + ratings.get(2).getValue() +
+//                "Metascore: " + metascore + "\n" +
+                "ImdbRating: " + imdbRating + "\n" +
+                "ImdbVotes: " + imdbVotes + "\n" +
+                "ImdbID: " + imdbID + "\n" +
+                "Тип: " + type + "\n" +
+                "Релиз на DVD: " + dvd + "\n" +
+                "Сборы: " + boxOffice + "\n" +
+                "Производство: " + production + "\n" +
+                "Веб-сайт: " + website;
+    }
 }
