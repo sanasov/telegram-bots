@@ -13,7 +13,8 @@ public class WeatherServiceFromYahoo {
         try {
             YahooWeatherService service = new YahooWeatherService();
             YahooWeatherService.LimitDeclaration channel = service.getForecastForLocation(location, DegreeUnit.CELSIUS);
-            result = channel.all().get(0).getItem().getForecasts().stream().map(Forecast::toString).reduce((cur, sum) -> cur + "\n" + sum).get();
+            result = channel.all().get(0).getDescription().substring(7)
+                    + channel.all().get(0).getItem().getForecasts().stream().map(Forecast::toString).reduce((cur, sum) -> cur + "\n" + sum).get();
         } catch (Exception e) {
             result = "Не нашел такой город: " + location + "\n Попробуйте еще, но в этот раз пишите нормально, а не как обычно)";
         }

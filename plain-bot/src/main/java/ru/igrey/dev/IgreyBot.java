@@ -1,5 +1,7 @@
 package ru.igrey.dev;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -15,8 +17,10 @@ import java.util.List;
  */
 public class IgreyBot extends TelegramLongPollingBot {
 
-    private WeatherServiceFromYahoo weatherService;
+    private static final Logger logger = LoggerFactory.getLogger(IgreyBot.class);
     private static List<TelegramConversation> conversations = new ArrayList<>();
+
+    private WeatherServiceFromYahoo weatherService;
 
     public IgreyBot(WeatherServiceFromYahoo weatherServiceFromYahoo) {
         weatherService = weatherServiceFromYahoo;
@@ -32,6 +36,8 @@ public class IgreyBot extends TelegramLongPollingBot {
         if (!update.hasMessage() || !update.getMessage().hasText()) {
             return;
         }
+        logger.info("User: " + update.getMessage().getChat());
+        logger.info("Text: " + update.getMessage().getText());
         TelegramConversation conversation = getConversationByCharId(update.getMessage().getChatId());
         addConversationIfNotExist(conversation);
         answerOnTextMessage(update, conversation);
@@ -81,10 +87,16 @@ public class IgreyBot extends TelegramLongPollingBot {
             conversation.setStatus(ConversationStatus.WEATHER_REQUEST_YES_NO);
             responseMessage = "Хотите узнать прогноз погоды? (Да/Нет)";
         } else if (conversation.getStatus() == ConversationStatus.WEATHER_REQUEST_YES_NO) {
-            if (incomingMessage.toLowerCase().contains("да")) {
+            if (incomingMessage.toLowerCase().contains("да")
+                    || incomingMessage.toLowerCase().contains("yes")
+                    || incomingMessage.toLowerCase().contains("yes")
+                    || incomingMessage.toLowerCase().contains("yep")
+                    ) {
                 responseMessage = "В каком городе?";
                 conversation.setStatus(ConversationStatus.WAITING_FOR_CITY);
-            } else if (incomingMessage.toLowerCase().contains("нет")) {
+            } else if (incomingMessage.toLowerCase().contains("нет")
+                    || incomingMessage.toLowerCase().contains("no")
+                    || incomingMessage.toLowerCase().contains("nope")) {
                 responseMessage = "Пидора ответ!)";
                 conversation.setStatus(ConversationStatus.COMPLETED);
             } else {
