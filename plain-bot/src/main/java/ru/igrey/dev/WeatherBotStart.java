@@ -7,7 +7,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 /**
  * Created by sanasov on 01.04.2017.
  */
-public class Main {
+public class WeatherBotStart {
     public static void main(String[] args) {
 
         ApiContextInitializer.init();
