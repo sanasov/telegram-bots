@@ -53,7 +53,7 @@ public class WeatherForecastView {
 
 
     public String toStringView() {
-        return date + "  low " + low + " high " + high + "" + ", " + description;
+        return date + "   low  " + low + "  high  " + high +  ",  " + description;
     }
 
 }
