@@ -301,7 +301,7 @@ public class Movie {
                 "Название фильма: " + title + "\n" +
                 "Год: " + year + "\n" +
                 "рейтинг MPAA: " + rated + "\n" +
-                "Released: " + released + "\n" +
+                "Премьера : " + released + "\n" +
                 "Время: " + runtime + "\n" +
                 "Жанр: " + genre + "\n" +
                 "Режиссер: " + director + "\n" +
