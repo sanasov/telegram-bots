@@ -34,7 +34,7 @@ public class PollBot extends TelegramLongPollingBot {
         if (update.hasMessage()) {
             logger.info("User: " + update.getMessage().getChat());
             logger.info("Text: " + update.getMessage().getText());
-            sendMsg(update.getMessage(), "Привет, я робот", true);
+            sendButtonMessage(update.getMessage(), "Привет, я робот");
         } else if (update.hasCallbackQuery()) {
             CallbackQuery query = update.getCallbackQuery();
             AnswerCallbackQuery answer = new AnswerCallbackQuery();
@@ -42,9 +42,9 @@ public class PollBot extends TelegramLongPollingBot {
             answer.setText("You have voted. Thank you");
             // сообщение в чат
             if (query.getData().equals("yesClickId")) {
-                sendMsg(query.getMessage(), "You click yes", false);
+                sendButtonMessage(query.getMessage(), "You click yes");
             } else if (query.getData().equals("noClickId")) {
-                sendMsg(query.getMessage(), "You click no", false);
+                sendButtonMessage(query.getMessage(), "You click no");
             }
             // callback ответ
             try {
@@ -55,17 +55,11 @@ public class PollBot extends TelegramLongPollingBot {
         }
     }
 
-    private void sendMsg(Message message, String text, boolean isReplay) {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.enableMarkdown(true);
+    private void sendTextMessage() {
 
-        sendMessage.setChatId(message.getChatId().toString());
-        if (isReplay) {
-            sendMessage.setReplyToMessageId(message.getMessageId());
-        }
+    }
 
-        sendMessage.setText(text);
-
+    private void sendButtonMessage(Message message, String text) {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         List<InlineKeyboardButton> row = new ArrayList<>();
@@ -80,6 +74,11 @@ public class PollBot extends TelegramLongPollingBot {
         row.add(noBtn);
         keyboard.add(row);
         markup.setKeyboard(keyboard);
+
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.enableMarkdown(true);
+        sendMessage.setChatId(message.getChatId());
+        sendMessage.setText(text);
         sendMessage.setReplyMarkup(markup);
 
         try {

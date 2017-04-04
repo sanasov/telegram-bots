@@ -13,7 +13,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <name>plain-bot</name>
+    <name>movie-bot</name>
     <url>http://maven.apache.org</url>
 
 
