@@ -8,9 +8,12 @@ import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import ru.igrey.dev.domain.TelegramUser;
+import ru.igrey.dev.domain.UserProcessStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +33,37 @@ public class PollBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        // We check if the update has a message and the message has text
+        TelegramUser telegramUser = getTelegramUserByUserId(getChatId(update));
+
         if (update.hasMessage()) {
-            logger.info("User: " + update.getMessage().getChat());
-            logger.info("Text: " + update.getMessage().getText());
-            sendButtonMessage(update.getMessage(), "Привет, я робот");
+            Message incomingMessage = update.getMessage();
+            if (incomingMessage.getChat().isGroupChat()) {
+                return;
+            }
+            logger.info("User: " + incomingMessage.getChat());
+            logger.info("Text: " + incomingMessage.getText());
+            if (telegramUser.status() == UserProcessStatus.START_CREATE_POLL) {
+
+            }
+            if (KeyboardText.CREATE_POLL.equals(incomingMessage.getText())) {
+                sendTextMessage(
+                        "Name your poll",
+                        incomingMessage.getChatId(),
+                        null
+                );
+                telegramUser = telegramUser.toNewStatus(UserProcessStatus.START_CREATE_POLL);
+            } else if (telegramUser.status() == UserProcessStatus.CREATE_NAME_POLL) {
+
+            } else if (KeyboardText.SHOW_CREATED_POLLS.equals(incomingMessage.getText())) {
+
+            } else {
+                sendTextMessage(
+                        "Выберите действие",
+                        incomingMessage.getChatId(),
+                        ReplyKeyboard.getKeyboardOnUserStart()
+                );
+            }
+
         } else if (update.hasCallbackQuery()) {
             CallbackQuery query = update.getCallbackQuery();
             AnswerCallbackQuery answer = new AnswerCallbackQuery();
@@ -55,8 +84,28 @@ public class PollBot extends TelegramLongPollingBot {
         }
     }
 
+    private Long getChatId(Update update) {
+        return null;
+    }
+
+    private TelegramUser getTelegramUserByUserId(Long id) {
+        return null;
+    }
+
     private void sendTextMessage() {
 
+    }
+
+    private void sendTextMessage(String responseMessage, Long chatId, ReplyKeyboardMarkup keyboardMarkup) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setReplyMarkup(keyboardMarkup);
+        sendMessage.setChatId(chatId)
+                .setText(responseMessage);
+        try {
+            sendMessage(sendMessage);
+        } catch (TelegramApiException e) {
+            logger.error(e.getMessage());
+        }
     }
 
     private void sendButtonMessage(Message message, String text) {
