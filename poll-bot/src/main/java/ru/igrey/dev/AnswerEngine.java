@@ -1,5 +1,6 @@
 package ru.igrey.dev;
 
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 
 /**
@@ -7,5 +8,10 @@ import org.telegram.telegrambots.api.objects.Update;
  */
 public class AnswerEngine {
     private Update update;
+
+
+    private void sendMsg(Message message, String text, boolean isReplay) {
+
+    }
 
 }

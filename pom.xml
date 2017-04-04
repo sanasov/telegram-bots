@@ -15,7 +15,7 @@
   </properties>
 
   <modules>
-    <module>plain-bot</module>
+    <module>weather-bot</module>
     <module>movie-bot</module>
     <module>poll-bot</module>
   </modules>

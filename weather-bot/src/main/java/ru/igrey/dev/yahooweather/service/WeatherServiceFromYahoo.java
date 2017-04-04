@@ -1,4 +1,4 @@
-package ru.igrey.dev;
+package ru.igrey.dev.yahooweather.service;
 
 import com.github.fedy2.weather.YahooWeatherService;
 import com.github.fedy2.weather.data.Channel;

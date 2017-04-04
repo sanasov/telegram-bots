@@ -1,4 +1,6 @@
-package ru.igrey.dev;
+package ru.igrey.dev.domain;
+
+import ru.igrey.dev.ConversationStatus;
 
 import java.time.LocalDateTime;
 

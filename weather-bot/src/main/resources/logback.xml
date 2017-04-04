@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <appender name="FILE-ENGINE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/plainBot.log</file>
+    <appender name="FILE-WEATHER" class="ch.qos.logback.core.FileAppender">
+        <file>logs/weatherBot.log</file>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{35} - %msg%n</pattern>
         </encoder>
@@ -13,11 +13,11 @@
 
     <logger name="ru.igrey.dev" level="DEBUG"
             additivity="false">
-        <appender-ref ref="FILE-ENGINE"/>
+        <appender-ref ref="FILE-WEATHER"/>
     </logger>
 
 
     <root level="DEBUG">
-        <appender-ref ref="FILE-ENGINE"/>
+        <appender-ref ref="FILE-WEATHER"/>
     </root>
 </configuration>

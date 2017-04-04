@@ -40,11 +40,11 @@ public class WeatherMapper {
 
     private static String getTemperatureView(int degree) {
         if (degree == 0) {
-            return "0 C";
+            return "0 ℃";
         } else if (degree > 0) {
-            return "+" + degree + " C";
+            return "+" + degree + " ℃";
         } else {
-            return degree + " C";
+            return degree + " ℃";
         }
     }
 

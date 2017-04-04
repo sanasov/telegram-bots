@@ -32,20 +32,8 @@ public class PollBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         // We check if the update has a message and the message has text
         if (update.hasMessage()) {
-
-//            logger.info("User: " + update.getMessage().getChat());
-//            logger.info("Text: " + update.getMessage().getText());
-//            TelegramConversation conversation = telegramConversations.getConversationByCharId(update.getMessage().getChatId());
-//            answerEngine = new AnswerEngine(
-//                    update,
-//                    conversation,
-//                    weatherService);
-//            telegramConversations.addConversationIfNotExist(conversation);
-//            try {
-//                sendMessage(answerEngine.answerMessage());
-//            } catch (TelegramApiException e) {
-//                e.printStackTrace();
-//            }
+            logger.info("User: " + update.getMessage().getChat());
+            logger.info("Text: " + update.getMessage().getText());
             sendMsg(update.getMessage(), "Привет, я робот", true);
         } else if (update.hasCallbackQuery()) {
             CallbackQuery query = update.getCallbackQuery();
