@@ -1,4 +1,4 @@
-package ru.igrey.dev.statemachine;
+package ru.igrey.dev.statemachine.createengine;
 
 import ru.igrey.dev.domain.Poll;
 
