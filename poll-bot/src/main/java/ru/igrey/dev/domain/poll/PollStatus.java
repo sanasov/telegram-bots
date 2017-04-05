@@ -1,4 +1,4 @@
-package ru.igrey.dev.domain;
+package ru.igrey.dev.domain.poll;
 
 /**
  * Created by sanasov on 04.04.2017.

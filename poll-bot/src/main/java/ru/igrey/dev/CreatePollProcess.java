@@ -1,7 +1,7 @@
 package ru.igrey.dev;
 
-import ru.igrey.dev.domain.Poll;
-import ru.igrey.dev.domain.PollStatus;
+import ru.igrey.dev.domain.poll.Poll;
+import ru.igrey.dev.domain.poll.PollStatus;
 import ru.igrey.dev.domain.TelegramUser;
 
 /**

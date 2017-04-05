@@ -2,6 +2,7 @@ package ru.igrey.dev.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import ru.igrey.dev.domain.poll.Poll;
 
 import java.util.List;
 

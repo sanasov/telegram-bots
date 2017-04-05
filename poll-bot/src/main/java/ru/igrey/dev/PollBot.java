@@ -14,6 +14,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.UserProcessStatus;
+import ru.igrey.dev.statemachine.create.PollStateMachine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class PollBot extends TelegramLongPollingBot {
     private static final Logger logger = LoggerFactory.getLogger(PollBot.class);
 
     private AnswerEngine answerEngine;
+    private PollStateMachine stateMachine;
 
     public PollBot(AnswerEngine answerEngine) {
         this.answerEngine = answerEngine;
@@ -37,23 +39,22 @@ public class PollBot extends TelegramLongPollingBot {
 
         if (update.hasMessage()) {
             Message incomingMessage = update.getMessage();
+            String responseText;
             if (incomingMessage.getChat().isGroupChat()) {
                 return;
             }
             logger.info("User: " + incomingMessage.getChat());
             logger.info("Text: " + incomingMessage.getText());
-            if (telegramUser.status() == UserProcessStatus.START_CREATE_POLL) {
 
+            if (incomingMessage.getText().equals(KeyboardText.CREATE_POLL)
+                    && telegramUser.status() != UserProcessStatus.CREATE_POLL) {
+                telegramUser = telegramUser.toNewStatus(UserProcessStatus.CREATE_POLL);
             }
-            if (KeyboardText.CREATE_POLL.equals(incomingMessage.getText())) {
-                sendTextMessage(
-                        "Name your poll",
-                        incomingMessage.getChatId(),
-                        null
-                );
-                telegramUser = telegramUser.toNewStatus(UserProcessStatus.START_CREATE_POLL);
-            } else if (telegramUser.status() == UserProcessStatus.CREATE_NAME_POLL) {
 
+            if (telegramUser.status() == UserProcessStatus.CREATE_POLL) {
+                responseText = telegramUser.pollMachine().getResponseOnCreateAction();
+                telegramUser.pollMachine().create(incomingMessage.getText());
+                sendTextMessage(responseText, incomingMessage.getChatId(), null);
             } else if (KeyboardText.SHOW_CREATED_POLLS.equals(incomingMessage.getText())) {
 
             } else {
@@ -90,10 +91,6 @@ public class PollBot extends TelegramLongPollingBot {
 
     private TelegramUser getTelegramUserByUserId(Long id) {
         return null;
-    }
-
-    private void sendTextMessage() {
-
     }
 
     private void sendTextMessage(String responseMessage, Long chatId, ReplyKeyboardMarkup keyboardMarkup) {

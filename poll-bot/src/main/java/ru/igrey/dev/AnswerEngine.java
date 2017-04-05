@@ -1,7 +1,7 @@
 package ru.igrey.dev;
 
 import org.telegram.telegrambots.api.objects.Update;
-import ru.igrey.dev.domain.Poll;
+import ru.igrey.dev.domain.poll.Poll;
 
 import java.util.List;
 

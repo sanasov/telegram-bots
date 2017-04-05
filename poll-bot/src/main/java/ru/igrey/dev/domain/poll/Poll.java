@@ -1,7 +1,10 @@
-package ru.igrey.dev.domain;
+package ru.igrey.dev.domain.poll;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import ru.igrey.dev.domain.AnswerOption;
+import ru.igrey.dev.domain.TelegramUser;
+import ru.igrey.dev.domain.VotedUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +49,10 @@ public class Poll {
 
     public Poll toNewQuestion(String newQuestion) {
         return new Poll(title, pollId, newQuestion, possibleAnswers, votedUsers, author, status);
+    }
+
+    public PollStatus status() {
+        return status;
     }
 
 

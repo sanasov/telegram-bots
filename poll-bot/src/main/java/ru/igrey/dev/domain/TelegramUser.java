@@ -2,6 +2,8 @@ package ru.igrey.dev.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import ru.igrey.dev.domain.poll.Poll;
+import ru.igrey.dev.statemachine.create.PollStateMachine;
 
 import java.util.List;
 
@@ -14,6 +16,7 @@ public class TelegramUser {
     private String userName;
     private UserProcessStatus status;
     private List<Poll> myPolls;
+    private PollStateMachine pollMachine;
 
     public TelegramUser(Long userId, String firstName, String lastName, String userName, UserProcessStatus status, List<Poll> myPolls) {
         this.userId = userId;
@@ -62,5 +65,9 @@ public class TelegramUser {
 
     public List<Poll> myPolls() {
         return myPolls;
+    }
+
+    public PollStateMachine pollMachine() {
+        return pollMachine;
     }
 }
