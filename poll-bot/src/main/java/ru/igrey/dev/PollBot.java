@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
+import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -14,10 +15,14 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.UserProcessStatus;
+import ru.igrey.dev.domain.poll.Poll;
+import ru.igrey.dev.domain.poll.PollStatus;
 import ru.igrey.dev.statemachine.create.PollStateMachine;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by sanasov on 01.04.2017.
@@ -25,9 +30,8 @@ import java.util.List;
 public class PollBot extends TelegramLongPollingBot {
 
     private static final Logger logger = LoggerFactory.getLogger(PollBot.class);
-
     private AnswerEngine answerEngine;
-    private PollStateMachine stateMachine;
+    public static Set<TelegramUser> telegramUsers = new HashSet<>();
 
     public PollBot(AnswerEngine answerEngine) {
         this.answerEngine = answerEngine;
@@ -35,7 +39,7 @@ public class PollBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        TelegramUser telegramUser = getTelegramUserByUserId(getChatId(update));
+        TelegramUser telegramUser = getOrCreateTelegramUserByUserId(update.getMessage().getChat());
 
         if (update.hasMessage()) {
             Message incomingMessage = update.getMessage();
@@ -85,12 +89,25 @@ public class PollBot extends TelegramLongPollingBot {
         }
     }
 
-    private Long getChatId(Update update) {
-        return null;
+
+    private TelegramUser getOrCreateTelegramUserByUserId(Chat chat) {
+        TelegramUser result = telegramUsers.stream()
+                .filter(u -> u.userId().equals(chat.getId()))
+                .findAny()
+                .orElse(createTelegramUser(chat));
+        telegramUsers.add(result);
+        return result;
     }
 
-    private TelegramUser getTelegramUserByUserId(Long id) {
-        return null;
+    private TelegramUser createTelegramUser(Chat chat) {
+        return new TelegramUser(
+                chat.getId(),
+                chat.getFirstName(),
+                chat.getLastName(),
+                chat.getUserName(),
+                UserProcessStatus.START,
+                new ArrayList<>(),
+                new PollStateMachine(new Poll("1L", null, PollStatus.NEW)));
     }
 
     private void sendTextMessage(String responseMessage, Long chatId, ReplyKeyboardMarkup keyboardMarkup) {

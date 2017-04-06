@@ -18,13 +18,14 @@ public class TelegramUser {
     private List<Poll> myPolls;
     private PollStateMachine pollMachine;
 
-    public TelegramUser(Long userId, String firstName, String lastName, String userName, UserProcessStatus status, List<Poll> myPolls) {
+    public TelegramUser(Long userId, String firstName, String lastName, String userName, UserProcessStatus status, List<Poll> myPolls, PollStateMachine pollMachine) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
         this.status = status;
         this.myPolls = myPolls;
+        this.pollMachine = pollMachine;
     }
 
 
@@ -34,7 +35,9 @@ public class TelegramUser {
                 lastName,
                 userName,
                 status,
-                myPolls);
+                myPolls,
+                pollMachine
+                );
     }
 
 

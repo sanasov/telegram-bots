@@ -8,6 +8,7 @@ import ru.igrey.dev.domain.poll.PollStatus;
  */
 public class PollStateMachine {
 
+    private CreatePollAction newPollAction;
     private CreatePollAction namePollAction;
     private CreatePollAction answerOptionAction;
     private CreatePollAction questionPollAction;
@@ -18,10 +19,11 @@ public class PollStateMachine {
 
 
     public PollStateMachine(Poll poll) {
+        this.poll = poll;
         if (poll.status().equals(PollStatus.COMPLETED)) {
             complete();
         }
-
+        newPollAction = new CreateNewPollAction(this);
         namePollAction = new CreatePollNameAction(this);
         answerOptionAction = new CreatePollAnswerOptionAction(this);
         questionPollAction = new CreatePollQuestionAction(this);
@@ -38,6 +40,8 @@ public class PollStateMachine {
 
     private CreatePollAction createCurrentState(Poll poll) {
         switch (poll.status()) {
+            case NEW:
+                return newPollAction;
             case CREATE_NAME:
                 return namePollAction;
             case CREATE_QUESTION:
