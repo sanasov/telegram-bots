@@ -17,8 +17,10 @@ import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.UserProcessStatus;
 import ru.igrey.dev.domain.poll.Poll;
 import ru.igrey.dev.domain.poll.PollStatus;
+import ru.igrey.dev.statemachine.create.PollExchange;
 import ru.igrey.dev.statemachine.create.PollStateMachine;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -43,7 +45,6 @@ public class PollBot extends TelegramLongPollingBot {
 
         if (update.hasMessage()) {
             Message incomingMessage = update.getMessage();
-            String responseText;
             if (incomingMessage.getChat().isGroupChat()) {
                 return;
             }
@@ -52,13 +53,13 @@ public class PollBot extends TelegramLongPollingBot {
 
             if (incomingMessage.getText().equals(KeyboardText.CREATE_POLL)
                     && telegramUser.status() != UserProcessStatus.CREATE_POLL) {
-                telegramUser = telegramUser.toNewStatus(UserProcessStatus.CREATE_POLL);
+                telegramUser.setStatus(UserProcessStatus.CREATE_POLL);
             }
 
             if (telegramUser.status() == UserProcessStatus.CREATE_POLL) {
-                responseText = telegramUser.pollMachine().getResponseOnCreateAction();
                 telegramUser.pollMachine().create(incomingMessage.getText());
-                sendTextMessage(responseText, incomingMessage.getChatId(), null);
+                PollExchange pollExchange = telegramUser.pollMachine().getPollExchange();
+                sendTextMessage(pollExchange.getResponseText(), incomingMessage.getChatId(), pollExchange.getReplyKeyboardMarkup());
             } else if (KeyboardText.SHOW_CREATED_POLLS.equals(incomingMessage.getText())) {
 
             } else {
@@ -100,7 +101,7 @@ public class PollBot extends TelegramLongPollingBot {
     }
 
     private TelegramUser createTelegramUser(Chat chat) {
-        Poll newPoll = new Poll("1L", null, PollStatus.NEW);
+        Poll newPoll = new Poll(LocalDateTime.now().toString(), null, PollStatus.NEW);
         TelegramUser user = new TelegramUser(
                 chat.getId(),
                 chat.getFirstName(),
@@ -108,7 +109,10 @@ public class PollBot extends TelegramLongPollingBot {
                 chat.getUserName(),
                 UserProcessStatus.START,
                 new ArrayList<>(),
-                new PollStateMachine(newPoll));
+                new PollStateMachine(
+                        new PollExchange(newPoll, false, null, "")
+                )
+        );
         newPoll.setAuthor(user);
         return user;
     }

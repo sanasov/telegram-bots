@@ -1,14 +1,12 @@
 package ru.igrey.dev.domain;
 
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import ru.igrey.dev.domain.poll.Poll;
 import ru.igrey.dev.statemachine.create.PollStateMachine;
 
 import java.util.List;
 
 @EqualsAndHashCode
-@ToString
 public class TelegramUser {
     private Long userId;
     private String firstName;
@@ -40,6 +38,9 @@ public class TelegramUser {
                 );
     }
 
+    public void setStatus(UserProcessStatus status) {
+        this.status = status;
+    }
 
     public TelegramUser() {
     }

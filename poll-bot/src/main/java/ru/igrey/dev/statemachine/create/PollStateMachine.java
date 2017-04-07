@@ -1,6 +1,9 @@
 package ru.igrey.dev.statemachine.create;
 
-import ru.igrey.dev.domain.poll.Poll;
+import ru.igrey.dev.domain.poll.PollStatus;
+
+import static ru.igrey.dev.domain.UserProcessStatus.START;
+import static ru.igrey.dev.statemachine.create.ReponseMessagesInCreatingPollProcess.POLL_CREATED;
 
 /**
  * Created by sanasov on 06.04.2017.
@@ -16,12 +19,12 @@ public class PollStateMachine {
     private CreatePollAction completePollAction;
 
     private CreatePollAction currentAction;
-    private Poll poll;
-    private Boolean isComplete = false;
+
+    private PollExchange pollExchange;
 
 
-    public PollStateMachine(Poll poll) {
-        this.poll = poll;
+    public PollStateMachine(PollExchange pollExchange) {
+        this.pollExchange = pollExchange;
         newPollAction = new CreateNewPollAction(this);
         namePollAction = new CreatePollNameAction(this);
         answerOptionAction1 = new CreatePollAnswerOptionAction1(this);
@@ -29,7 +32,7 @@ public class PollStateMachine {
         answerAnotherOptionAction = new CreatePollAnotherAnswerOptionAction(this);
         questionPollAction = new CreatePollQuestionAction(this);
         completePollAction = new CreatePollCompleteAction(this);
-        currentAction = createCurrentState(poll);
+        currentAction = createCurrentState(pollExchange);
     }
 
     public void create(String incomingText) {
@@ -37,11 +40,12 @@ public class PollStateMachine {
     }
 
     public String getResponseOnCreateAction() {
-        return currentAction.responseOnCreateAction();
+        return pollExchange.getResponseText();
     }
 
-    private CreatePollAction createCurrentState(Poll poll) {
-        switch (poll.status()) {
+
+    private CreatePollAction createCurrentState(PollExchange pollExchange) {
+        switch (pollExchange.getPoll().status()) {
             case NEW:
                 return newPollAction;
             case CREATE_NAME:
@@ -57,25 +61,25 @@ public class PollStateMachine {
             case COMPLETED:
                 return completePollAction;
         }
-        throw new IllegalStateException("No state for status: " + poll.status());
+        throw new IllegalStateException("No state for status: " + pollExchange.getPoll().status());
     }
 
     public void complete() {
-        isComplete = true;
+        pollExchange.setComplete(true);
+        pollExchange.getPoll().author().myPolls().add(pollExchange.getPoll());
+        pollExchange.setResponseText(POLL_CREATED);
+        pollExchange.setReplyKeyboardMarkup(null);
+        pollExchange.setPoll(pollExchange.getPoll().toNewStatus(PollStatus.NEW));
+        pollExchange.getPoll().author().changeStatus(START);
     }
 
-    public Poll getPoll() {
-        return poll;
+    public PollExchange getPollExchange() {
+        return pollExchange;
     }
 
-    public void setPoll(Poll poll) {
-        this.poll = poll;
+    public void setPollExchange(PollExchange pollExchange) {
+        this.pollExchange = pollExchange;
     }
-
-    public Boolean getComplete() {
-        return isComplete;
-    }
-
 
     //getter setter
     public CreatePollAction getNamePollAction() {

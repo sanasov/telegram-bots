@@ -43,6 +43,10 @@ public class Poll {
         return new Poll(title, pollId, question, possibleAnswers, votedUsers, author, newStatus);
     }
 
+    public void setStatus(PollStatus pollStatus) {
+        this.status = pollStatus;
+    }
+
     public Poll toNewName(String newName) {
         return new Poll(newName, pollId, question, possibleAnswers, votedUsers, author, status);
     }

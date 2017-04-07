@@ -7,6 +7,4 @@ public interface CreatePollAction {
 
     void applyToPoll(String incomingText);
 
-    String responseOnCreateAction();
-
 }
