@@ -73,4 +73,8 @@ public class TelegramUser {
     public PollStateMachine pollMachine() {
         return pollMachine;
     }
+
+    public void changeStatus(UserProcessStatus status) {
+        this.status = status;
+    }
 }

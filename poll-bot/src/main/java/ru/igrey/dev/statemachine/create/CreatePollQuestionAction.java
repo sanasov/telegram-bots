@@ -17,8 +17,8 @@ public class CreatePollQuestionAction implements CreatePollAction {
     @Override
     public void applyToPoll(String question) {
         Poll pollWithQuestion = machine.getPoll().toNewQuestion(question);
-        machine.setPoll(pollWithQuestion.toNewStatus(PollStatus.CREATE_ANSWERS));
-        machine.setCurrentAction(machine.getQuestionPollAction());
+        machine.setPoll(pollWithQuestion.toNewStatus(PollStatus.CREATE_ANSWER1));
+        machine.setCurrentAction(machine.getAnswerOptionAction1());
     }
 
     @Override

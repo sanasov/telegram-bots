@@ -62,4 +62,12 @@ public class Poll {
         }
         possibleAnswers.add(answerOption);
     }
+
+    public TelegramUser author() {
+        return author;
+    }
+
+    public void setAuthor(TelegramUser author) {
+        this.author = author;
+    }
 }

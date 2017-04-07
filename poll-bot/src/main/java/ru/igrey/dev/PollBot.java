@@ -100,14 +100,17 @@ public class PollBot extends TelegramLongPollingBot {
     }
 
     private TelegramUser createTelegramUser(Chat chat) {
-        return new TelegramUser(
+        Poll newPoll = new Poll("1L", null, PollStatus.NEW);
+        TelegramUser user = new TelegramUser(
                 chat.getId(),
                 chat.getFirstName(),
                 chat.getLastName(),
                 chat.getUserName(),
                 UserProcessStatus.START,
                 new ArrayList<>(),
-                new PollStateMachine(new Poll("1L", null, PollStatus.NEW)));
+                new PollStateMachine(newPoll));
+        newPoll.setAuthor(user);
+        return user;
     }
 
     private void sendTextMessage(String responseMessage, Long chatId, ReplyKeyboardMarkup keyboardMarkup) {
