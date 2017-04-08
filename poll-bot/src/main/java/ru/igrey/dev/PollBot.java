@@ -15,12 +15,9 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.UserProcessStatus;
-import ru.igrey.dev.domain.poll.Poll;
-import ru.igrey.dev.domain.poll.PollStatus;
 import ru.igrey.dev.statemachine.create.PollExchange;
 import ru.igrey.dev.statemachine.create.PollStateMachine;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -101,7 +98,7 @@ public class PollBot extends TelegramLongPollingBot {
     }
 
     private TelegramUser createTelegramUser(Chat chat) {
-        Poll newPoll = new Poll(LocalDateTime.now().toString(), null, PollStatus.NEW);
+        PollStateMachine machine = new PollStateMachine(PollExchange.createNewPollExchange());
         TelegramUser user = new TelegramUser(
                 chat.getId(),
                 chat.getFirstName(),
@@ -109,11 +106,9 @@ public class PollBot extends TelegramLongPollingBot {
                 chat.getUserName(),
                 UserProcessStatus.START,
                 new ArrayList<>(),
-                new PollStateMachine(
-                        new PollExchange(newPoll, false, null, "")
-                )
+                machine
         );
-        newPoll.setAuthor(user);
+        machine.setAuthor(user);
         return user;
     }
 

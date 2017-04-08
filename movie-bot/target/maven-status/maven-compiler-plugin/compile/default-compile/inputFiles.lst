@@ -1,8 +1,9 @@
-C:\trainings\telegram-bots\plain-bot\src\main\java\ru\igrey\dev\TelegramConversation.java
-C:\trainings\telegram-bots\plain-bot\src\main\java\ru\igrey\dev\WeatherServiceFromYahoo.java
-C:\trainings\telegram-bots\plain-bot\src\main\java\ru\igrey\dev\CountryIsoCode.java
-C:\trainings\telegram-bots\plain-bot\src\main\java\ru\igrey\dev\IgreyBot.java
-C:\trainings\telegram-bots\plain-bot\src\main\java\ru\igrey\dev\WeatherServiceFromOwm.java
-C:\trainings\telegram-bots\plain-bot\src\main\java\ru\igrey\dev\ConversationStatus.java
-C:\trainings\telegram-bots\plain-bot\src\main\java\ru\igrey\dev\imdb\OmdbHttpClient.java
-C:\trainings\telegram-bots\plain-bot\src\main\java\ru\igrey\dev\Main.java
+C:\trainings\telegram-bots\movie-bot\src\main\java\ru\igrey\dev\imdb\view\Rating.java
+C:\trainings\telegram-bots\movie-bot\src\main\java\ru\igrey\dev\ConversationStatus.java
+C:\trainings\telegram-bots\movie-bot\src\main\java\ru\igrey\dev\imdb\OmdbService.java
+C:\trainings\telegram-bots\movie-bot\src\main\java\ru\igrey\dev\StartMovieBot.java
+C:\trainings\telegram-bots\movie-bot\src\main\java\ru\igrey\dev\imdb\OmdbHttpClient.java
+C:\trainings\telegram-bots\movie-bot\src\main\java\ru\igrey\dev\BotMovieBot.java
+C:\trainings\telegram-bots\movie-bot\src\main\java\ru\igrey\dev\imdb\view\Movie.java
+C:\trainings\telegram-bots\movie-bot\src\main\java\ru\igrey\dev\imdb\view\JsonMapper.java
+C:\trainings\telegram-bots\movie-bot\src\main\java\ru\igrey\dev\TelegramConversation.java

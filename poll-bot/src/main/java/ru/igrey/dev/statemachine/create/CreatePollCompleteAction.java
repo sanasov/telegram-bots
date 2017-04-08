@@ -17,9 +17,8 @@ public class CreatePollCompleteAction implements CreatePollAction {
     @Override
     public void applyToPoll(String possibleAnswer) {
         PollExchange pollExchange = machine.getPollExchange();
-        pollExchange.setComplete(false);
         machine.setCurrentAction(machine.getNewPollAction());
-        pollExchange.getPoll().setStatus(PollStatus.NEW);
+        pollExchange.setStatus(PollStatus.NEW);
         pollExchange.setReplyKeyboardMarkup(ReplyKeyboard.getKeyboardOnUserStart());
     }
 

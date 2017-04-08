@@ -2,9 +2,12 @@ package ru.igrey.dev.statemachine.create;
 
 import ru.igrey.dev.ReplyKeyboard;
 import ru.igrey.dev.domain.AnswerOption;
+import ru.igrey.dev.domain.poll.PollStatus;
 
 import static ru.igrey.dev.KeyboardText.COMPLETE_CREATE_POLL;
+import static ru.igrey.dev.domain.UserProcessStatus.START;
 import static ru.igrey.dev.statemachine.create.ReponseMessagesInCreatingPollProcess.ANOTHER_ANSWER_ADDED;
+import static ru.igrey.dev.statemachine.create.ReponseMessagesInCreatingPollProcess.POLL_CREATED;
 
 /**
  * Created by sanasov on 04.04.2017.
@@ -20,9 +23,9 @@ public class CreatePollAnotherAnswerOptionAction implements CreatePollAction {
     @Override
     public void applyToPoll(String possibleAnswer) {
         PollExchange pollExchange = machine.getPollExchange();
-        completeIfNeeded(possibleAnswer);
-        if (pollExchange.getComplete()) {
+        if (possibleAnswer.equals(COMPLETE_CREATE_POLL)) {
             machine.setCurrentAction(machine.getCompletePollAction());
+            complete();
         } else {
             pollExchange.setResponseText(ANOTHER_ANSWER_ADDED);
             pollExchange.getPoll().addAnswer(new AnswerOption(possibleAnswer));
@@ -30,10 +33,13 @@ public class CreatePollAnotherAnswerOptionAction implements CreatePollAction {
         }
     }
 
-    private void completeIfNeeded(String incomingMessage) {
-        if (incomingMessage.equals(COMPLETE_CREATE_POLL)) {
-            machine.complete();
-        }
+    public void complete() {
+        PollExchange pollExchange = machine.getPollExchange();
+        pollExchange.setStatus(PollStatus.NEW);
+        machine.getAuthor().myPolls().add(pollExchange.getPoll());
+        pollExchange.setResponseText(POLL_CREATED);
+        pollExchange.setReplyKeyboardMarkup(ReplyKeyboard.getKeyboardOnUserStart());
+        machine.getAuthor().changeStatus(START);
+        machine.getCurrentAction().applyToPoll("");
     }
-
 }

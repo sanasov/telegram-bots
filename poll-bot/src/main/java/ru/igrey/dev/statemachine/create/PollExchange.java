@@ -2,25 +2,36 @@ package ru.igrey.dev.statemachine.create;
 
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import ru.igrey.dev.domain.poll.Poll;
+import ru.igrey.dev.domain.poll.PollStatus;
+
+import java.time.LocalDateTime;
+
+import static ru.igrey.dev.statemachine.create.ReponseMessagesInCreatingPollProcess.NAME_YOUR_POLL;
 
 /**
  * Created by sanasov on 07.04.2017.
  */
 public class PollExchange {
     private Poll poll;
-    private Boolean isComplete;
     private ReplyKeyboardMarkup replyKeyboardMarkup;
     private String responseText;
+    private PollStatus status;
 
     public PollExchange() {
     }
 
-    public PollExchange(Poll poll, Boolean isComplete, ReplyKeyboardMarkup replyKeyboardMarkup, String responseText) {
+    public PollExchange(Poll poll, ReplyKeyboardMarkup replyKeyboardMarkup, String responseText, PollStatus status) {
         this.poll = poll;
-        this.isComplete = isComplete;
         this.replyKeyboardMarkup = replyKeyboardMarkup;
         this.responseText = responseText;
+        this.status = status;
     }
+
+    public static PollExchange createNewPollExchange() {
+        Poll newPoll = new Poll(LocalDateTime.now().toString());
+        return new PollExchange(newPoll, null, NAME_YOUR_POLL, PollStatus.NEW);
+    }
+
 
     public Poll getPoll() {
         return poll;
@@ -30,13 +41,6 @@ public class PollExchange {
         this.poll = poll;
     }
 
-    public Boolean getComplete() {
-        return isComplete;
-    }
-
-    public void setComplete(Boolean complete) {
-        isComplete = complete;
-    }
 
     public ReplyKeyboardMarkup getReplyKeyboardMarkup() {
         return replyKeyboardMarkup;
@@ -52,5 +56,13 @@ public class PollExchange {
 
     public void setResponseText(String responseText) {
         this.responseText = responseText;
+    }
+
+    public PollStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PollStatus status) {
+        this.status = status;
     }
 }

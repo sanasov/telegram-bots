@@ -1,10 +1,6 @@
 package ru.igrey.dev.statemachine.create;
 
-import ru.igrey.dev.ReplyKeyboard;
-import ru.igrey.dev.domain.poll.PollStatus;
-
-import static ru.igrey.dev.domain.UserProcessStatus.START;
-import static ru.igrey.dev.statemachine.create.ReponseMessagesInCreatingPollProcess.POLL_CREATED;
+import ru.igrey.dev.domain.TelegramUser;
 
 /**
  * Created by sanasov on 06.04.2017.
@@ -22,6 +18,7 @@ public class PollStateMachine {
     private CreatePollAction currentAction;
 
     private PollExchange pollExchange;
+    private TelegramUser author;
 
 
     public PollStateMachine(PollExchange pollExchange) {
@@ -40,13 +37,9 @@ public class PollStateMachine {
         currentAction.applyToPoll(incomingText);
     }
 
-    public String getResponseOnCreateAction() {
-        return pollExchange.getResponseText();
-    }
-
 
     private CreatePollAction createCurrentState(PollExchange pollExchange) {
-        switch (pollExchange.getPoll().status()) {
+        switch (pollExchange.getStatus()) {
             case NEW:
                 return newPollAction;
             case CREATE_NAME:
@@ -62,18 +55,10 @@ public class PollStateMachine {
             case COMPLETED:
                 return completePollAction;
         }
-        throw new IllegalStateException("No state for status: " + pollExchange.getPoll().status());
+        throw new IllegalStateException("No state for status: " + pollExchange.getStatus());
     }
 
-    public void complete() {
-        pollExchange.setComplete(true);
-        pollExchange.setPoll(pollExchange.getPoll().toNewStatus(PollStatus.NEW));
-        pollExchange.getPoll().author().myPolls().add(pollExchange.getPoll());
-        pollExchange.setResponseText(POLL_CREATED);
-        pollExchange.setReplyKeyboardMarkup(ReplyKeyboard.getKeyboardOnUserStart());
-        pollExchange.getPoll().author().changeStatus(START);
-        completePollAction.applyToPoll("");
-    }
+
 
     public PollExchange getPollExchange() {
         return pollExchange;
@@ -119,5 +104,13 @@ public class PollStateMachine {
 
     public void setCurrentAction(CreatePollAction currentAction) {
         this.currentAction = currentAction;
+    }
+
+    public void setAuthor(TelegramUser author) {
+        this.author = author;
+    }
+
+    public TelegramUser getAuthor() {
+        return author;
     }
 }

@@ -1,6 +1,6 @@
 package ru.igrey.dev.statemachine.create;
 
-import static ru.igrey.dev.statemachine.create.ReponseMessagesInCreatingPollProcess.NAME_YOUR_POLL;
+import static ru.igrey.dev.statemachine.create.PollExchange.createNewPollExchange;
 
 /**
  * Created by sanasov on 04.04.2017.
@@ -15,8 +15,7 @@ public class CreateNewPollAction implements CreatePollAction {
 
     @Override
     public void applyToPoll(String possibleAnswer) {
+        machine.setPollExchange(createNewPollExchange());
         machine.setCurrentAction(machine.getNamePollAction());
-        machine.getPollExchange().setResponseText(NAME_YOUR_POLL);
-        machine.getPollExchange().setReplyKeyboardMarkup(null);
     }
 }

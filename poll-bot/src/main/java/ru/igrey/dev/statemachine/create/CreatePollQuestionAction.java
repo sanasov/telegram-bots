@@ -20,7 +20,8 @@ public class CreatePollQuestionAction implements CreatePollAction {
     public void applyToPoll(String question) {
         PollExchange pollExchange = machine.getPollExchange();
         Poll pollWithQuestion = pollExchange.getPoll().toNewQuestion(question);
-        pollExchange.setPoll(pollWithQuestion.toNewStatus(PollStatus.CREATE_ANSWER1));
+        pollExchange.setPoll(pollWithQuestion);
+        pollExchange.setStatus(PollStatus.CREATE_ANSWER1);
         pollExchange.setResponseText(ADD_FIRST_ANSWER);
         machine.setCurrentAction(machine.getAnswerOptionAction1());
         pollExchange.setReplyKeyboardMarkup(null);
