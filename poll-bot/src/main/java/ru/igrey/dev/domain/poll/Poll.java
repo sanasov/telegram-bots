@@ -47,4 +47,11 @@ public class Poll {
         possibleAnswers.add(answerOption);
     }
 
+    public String getPollId() {
+        return pollId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
 }

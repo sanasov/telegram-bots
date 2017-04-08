@@ -15,7 +15,7 @@ public class PollBotStart {
         TelegramBotsApi botsApi = new TelegramBotsApi();
 
         try {
-            botsApi.registerBot(new PollBot(new AnswerEngine()));
+            botsApi.registerBot(new PollBot(new PollService()));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }

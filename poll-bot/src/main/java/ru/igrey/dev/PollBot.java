@@ -10,17 +10,16 @@ import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.UserProcessStatus;
+import ru.igrey.dev.domain.poll.Poll;
 import ru.igrey.dev.statemachine.create.PollExchange;
 import ru.igrey.dev.statemachine.create.PollStateMachine;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -29,10 +28,10 @@ import java.util.Set;
 public class PollBot extends TelegramLongPollingBot {
 
     private static final Logger logger = LoggerFactory.getLogger(PollBot.class);
-    private AnswerEngine answerEngine;
+    private PollService answerEngine;
     public static Set<TelegramUser> telegramUsers = new HashSet<>();
 
-    public PollBot(AnswerEngine answerEngine) {
+    public PollBot(PollService answerEngine) {
         this.answerEngine = answerEngine;
     }
 
@@ -58,7 +57,9 @@ public class PollBot extends TelegramLongPollingBot {
                 PollExchange pollExchange = telegramUser.pollMachine().getPollExchange();
                 sendTextMessage(pollExchange.getResponseText(), incomingMessage.getChatId(), pollExchange.getReplyKeyboardMarkup());
             } else if (KeyboardText.SHOW_CREATED_POLLS.equals(incomingMessage.getText())) {
-                sendTextMessage(telegramUser.myPollsView(), incomingMessage.getChatId(), ReplyKeyboard.getKeyboardOnUserStart());
+                for(Poll poll : telegramUser.myPolls()) {
+                sendButtonMessage(incomingMessage.getChatId(), poll.getTitle(), PollService.createButtonsForPollView(poll.getPollId()));
+                }
             } else {
                 sendTextMessage(
                         "Выберите действие",
@@ -66,7 +67,6 @@ public class PollBot extends TelegramLongPollingBot {
                         ReplyKeyboard.getKeyboardOnUserStart()
                 );
             }
-
         } else if (update.hasCallbackQuery()) {
             CallbackQuery query = update.getCallbackQuery();
             AnswerCallbackQuery answer = new AnswerCallbackQuery();
@@ -74,9 +74,9 @@ public class PollBot extends TelegramLongPollingBot {
             answer.setText("You have voted. Thank you");
             // сообщение в чат
             if (query.getData().equals("yesClickId")) {
-                sendButtonMessage(query.getMessage(), "You click yes");
+                sendButtonMessage(query.getMessage().getChatId(), "You click yes", null);
             } else if (query.getData().equals("noClickId")) {
-                sendButtonMessage(query.getMessage(), "You click no");
+                sendButtonMessage(query.getMessage().getChatId(), "You click no",null);
             }
             // callback ответ
             try {
@@ -124,25 +124,10 @@ public class PollBot extends TelegramLongPollingBot {
         }
     }
 
-    private void sendButtonMessage(Message message, String text) {
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-        List<InlineKeyboardButton> row = new ArrayList<>();
-
-        InlineKeyboardButton yesBtn = new InlineKeyboardButton();
-        yesBtn.setText("Yes");
-        yesBtn.setCallbackData("yesClickId");
-        InlineKeyboardButton noBtn = new InlineKeyboardButton();
-        noBtn.setText("No");
-        noBtn.setCallbackData("noClickId");
-        row.add(yesBtn);
-        row.add(noBtn);
-        keyboard.add(row);
-        markup.setKeyboard(keyboard);
-
+    private void sendButtonMessage(Long chatId, String text, InlineKeyboardMarkup markup) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(chatId);
         sendMessage.setText(text);
         sendMessage.setReplyMarkup(markup);
 
