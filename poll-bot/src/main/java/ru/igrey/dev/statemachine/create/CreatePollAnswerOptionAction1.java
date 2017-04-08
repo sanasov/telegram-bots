@@ -21,6 +21,7 @@ public class CreatePollAnswerOptionAction1 implements CreatePollAction {
         PollExchange pollExchange = machine.getPollExchange();
         pollExchange.setPoll(pollExchange.getPoll().toNewStatus(PollStatus.CREATE_ANSWER2));
         pollExchange.setResponseText(ADD_SECOND_ANSWER);
+        pollExchange.setReplyKeyboardMarkup(null);
         machine.setCurrentAction(machine.getAnswerOptionAction2());
         pollExchange.getPoll().addAnswer(new AnswerOption(possibleAnswer));
     }

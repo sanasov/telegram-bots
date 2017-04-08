@@ -18,9 +18,11 @@ public class CreatePollNameAction implements CreatePollAction {
 
     @Override
     public void applyToPoll(String pollName) {
-        Poll namedPoll = machine.getPollExchange().getPoll().toNewName(pollName);
-        machine.getPollExchange().setPoll(namedPoll.toNewStatus(PollStatus.CREATE_QUESTION));
-        machine.getPollExchange().setResponseText(NOW_WRITE_QUESTION);
+        PollExchange pollExchange = machine.getPollExchange();
+        Poll namedPoll = pollExchange.getPoll().toNewName(pollName);
+        pollExchange.setPoll(namedPoll.toNewStatus(PollStatus.CREATE_QUESTION));
+        pollExchange.setResponseText(NOW_WRITE_QUESTION);
+        pollExchange.setReplyKeyboardMarkup(null);
         machine.setCurrentAction(machine.getQuestionPollAction());
     }
 

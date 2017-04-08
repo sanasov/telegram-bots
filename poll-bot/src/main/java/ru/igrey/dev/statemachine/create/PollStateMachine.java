@@ -1,5 +1,6 @@
 package ru.igrey.dev.statemachine.create;
 
+import ru.igrey.dev.ReplyKeyboard;
 import ru.igrey.dev.domain.poll.PollStatus;
 
 import static ru.igrey.dev.domain.UserProcessStatus.START;
@@ -66,11 +67,12 @@ public class PollStateMachine {
 
     public void complete() {
         pollExchange.setComplete(true);
+        pollExchange.setPoll(pollExchange.getPoll().toNewStatus(PollStatus.NEW));
         pollExchange.getPoll().author().myPolls().add(pollExchange.getPoll());
         pollExchange.setResponseText(POLL_CREATED);
-        pollExchange.setReplyKeyboardMarkup(null);
-        pollExchange.setPoll(pollExchange.getPoll().toNewStatus(PollStatus.NEW));
+        pollExchange.setReplyKeyboardMarkup(ReplyKeyboard.getKeyboardOnUserStart());
         pollExchange.getPoll().author().changeStatus(START);
+        completePollAction.applyToPoll("");
     }
 
     public PollExchange getPollExchange() {
@@ -104,6 +106,11 @@ public class PollStateMachine {
 
     public CreatePollAction getQuestionPollAction() {
         return questionPollAction;
+    }
+
+
+    public CreatePollAction getNewPollAction() {
+        return newPollAction;
     }
 
     public CreatePollAction getCurrentAction() {

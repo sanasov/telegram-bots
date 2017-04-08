@@ -9,8 +9,8 @@ import ru.igrey.dev.domain.VotedUser;
 import java.util.ArrayList;
 import java.util.List;
 
-@EqualsAndHashCode
-@ToString(exclude = "author")
+@EqualsAndHashCode(exclude = "author")
+@ToString(exclude = {"author", "status"})
 public class Poll {
     private String title;
     private String pollId;

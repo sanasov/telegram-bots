@@ -61,7 +61,7 @@ public class PollBot extends TelegramLongPollingBot {
                 PollExchange pollExchange = telegramUser.pollMachine().getPollExchange();
                 sendTextMessage(pollExchange.getResponseText(), incomingMessage.getChatId(), pollExchange.getReplyKeyboardMarkup());
             } else if (KeyboardText.SHOW_CREATED_POLLS.equals(incomingMessage.getText())) {
-
+                sendTextMessage(telegramUser.myPollsView(), incomingMessage.getChatId(), ReplyKeyboard.getKeyboardOnUserStart());
             } else {
                 sendTextMessage(
                         "Выберите действие",

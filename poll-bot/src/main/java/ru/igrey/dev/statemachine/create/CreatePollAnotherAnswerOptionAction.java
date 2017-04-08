@@ -2,12 +2,9 @@ package ru.igrey.dev.statemachine.create;
 
 import ru.igrey.dev.ReplyKeyboard;
 import ru.igrey.dev.domain.AnswerOption;
-import ru.igrey.dev.domain.poll.PollStatus;
 
 import static ru.igrey.dev.KeyboardText.COMPLETE_CREATE_POLL;
-import static ru.igrey.dev.domain.UserProcessStatus.START;
 import static ru.igrey.dev.statemachine.create.ReponseMessagesInCreatingPollProcess.ANOTHER_ANSWER_ADDED;
-import static ru.igrey.dev.statemachine.create.ReponseMessagesInCreatingPollProcess.POLL_CREATED;
 
 /**
  * Created by sanasov on 04.04.2017.
@@ -36,7 +33,6 @@ public class CreatePollAnotherAnswerOptionAction implements CreatePollAction {
     private void completeIfNeeded(String incomingMessage) {
         if (incomingMessage.equals(COMPLETE_CREATE_POLL)) {
             machine.complete();
-
         }
     }
 

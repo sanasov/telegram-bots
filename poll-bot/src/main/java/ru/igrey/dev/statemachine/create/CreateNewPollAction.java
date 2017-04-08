@@ -17,5 +17,6 @@ public class CreateNewPollAction implements CreatePollAction {
     public void applyToPoll(String possibleAnswer) {
         machine.setCurrentAction(machine.getNamePollAction());
         machine.getPollExchange().setResponseText(NAME_YOUR_POLL);
+        machine.getPollExchange().setReplyKeyboardMarkup(null);
     }
 }
