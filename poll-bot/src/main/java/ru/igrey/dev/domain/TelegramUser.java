@@ -72,6 +72,9 @@ public class TelegramUser {
 
 
     public List<Poll> myPolls() {
+        if (myPolls == null) {
+            myPolls = new ArrayList<>();
+        }
         return myPolls;
     }
 
@@ -80,7 +83,7 @@ public class TelegramUser {
                 .stream()
                 .map(Poll::toString)
                 .reduce((a, b) -> a + "\n " + b)
-                .orElse("There is no polls you've created");
+                .orElse("Нет ни одного опросника");
 
     }
 

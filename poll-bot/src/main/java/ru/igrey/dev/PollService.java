@@ -8,6 +8,10 @@ import ru.igrey.dev.domain.poll.Poll;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.igrey.dev.CommandBtn.DELETE_POLL;
+import static ru.igrey.dev.CommandBtn.POST_POLL;
+import static ru.igrey.dev.CommandBtn.SHOW_RESULT;
+
 /**
  * Created by sanasov on 03.04.2017.
  */
@@ -36,14 +40,14 @@ public class PollService {
         List<InlineKeyboardButton> buttonRow = new ArrayList<>();
 
         InlineKeyboardButton postBtn = new InlineKeyboardButton();
-        postBtn.setText("Опубликовать");
-        postBtn.setCallbackData("postPoll_" + pollId);
+        postBtn.setText(POST_POLL.title());
+        postBtn.setCallbackData(POST_POLL.nameWithDelimeter() + pollId);
         InlineKeyboardButton deleteBtn = new InlineKeyboardButton();
-        deleteBtn.setText("Удалить");
-        deleteBtn.setCallbackData("deletePoll_" + pollId);
+        deleteBtn.setText(DELETE_POLL.title());
+        deleteBtn.setCallbackData(DELETE_POLL.nameWithDelimeter() + pollId);
         InlineKeyboardButton showBtn = new InlineKeyboardButton();
-        showBtn.setText("Просмотреть");
-        showBtn.setCallbackData("showResult_" + pollId);
+        showBtn.setText(SHOW_RESULT.title());
+        showBtn.setCallbackData(SHOW_RESULT.nameWithDelimeter() + pollId);
         buttonRow.add(showBtn);
         buttonRow.add(postBtn);
         buttonRow.add(deleteBtn);
