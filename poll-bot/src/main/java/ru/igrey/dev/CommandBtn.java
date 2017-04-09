@@ -6,10 +6,11 @@ package ru.igrey.dev;
 public enum CommandBtn {
     POST_POLL("Опубликовать"),
     DELETE_POLL("Удалить"),
-    SHOW_RESULT("Просмотреть");
+    SHOW_RESULT("Просмотреть"),
+    HIDE_POLL("Скрыть");
 
     private final String title;
-    private final static String delimeter = "#";
+    private final static String delimiter = "#";
 
     CommandBtn(String title) {
         this.title = title;
@@ -21,7 +22,7 @@ public enum CommandBtn {
 
 
     public String nameWithDelimeter() {
-        return name() + delimeter;
+        return name() + delimiter;
     }
 
     public static CommandBtn getCommand(String buttonId) {

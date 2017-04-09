@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.Message;
@@ -19,12 +20,9 @@ import ru.igrey.dev.statemachine.create.PollExchange;
 import ru.igrey.dev.statemachine.create.PollStateMachine;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import static ru.igrey.dev.CommandBtn.DELETE_POLL;
 import static ru.igrey.dev.CommandBtn.POST_POLL;
-import static ru.igrey.dev.CommandBtn.SHOW_RESULT;
 import static ru.igrey.dev.Emoji.SMILING_FACE_WITH_SMILING_EYES;
 
 /**
@@ -33,11 +31,11 @@ import static ru.igrey.dev.Emoji.SMILING_FACE_WITH_SMILING_EYES;
 public class PollBot extends TelegramLongPollingBot {
 
     private static final Logger logger = LoggerFactory.getLogger(PollBot.class);
-    private PollService answerEngine;
-    public static Set<TelegramUser> telegramUsers = new HashSet<>();
+    private PollService pollService;
+    public static List<TelegramUser> telegramUsers = new ArrayList<>();
 
-    public PollBot(PollService answerEngine) {
-        this.answerEngine = answerEngine;
+    public PollBot(PollService pollService) {
+        this.pollService = pollService;
     }
 
     @Override
@@ -54,17 +52,21 @@ public class PollBot extends TelegramLongPollingBot {
         CallbackQuery query = update.getCallbackQuery();
         AnswerCallbackQuery answer = new AnswerCallbackQuery();
         answer.setCallbackQueryId(query.getId());
-        answer.setText(query.getData());
+        Poll poll = pollService.findPollById(extractPollId(query.getData()));
         // сообщение в чат
         switch (CommandBtn.getCommand(query.getData())) {
             case DELETE_POLL:
-                sendButtonMessage(query.getMessage().getChatId(), DELETE_POLL.title(), null);
+                deletePoll(query.getMessage().getChatId(), query.getMessage().getMessageId(), poll);
+                answer.setText(poll.getTitle() + " удален");
                 break;
             case SHOW_RESULT:
-                sendButtonMessage(query.getMessage().getChatId(), SHOW_RESULT.title(), null);
+                showResult(query.getMessage().getChatId(), query.getMessage().getMessageId(), poll);
                 break;
             case POST_POLL:
                 sendButtonMessage(query.getMessage().getChatId(), POST_POLL.title(), null);
+                break;
+            case HIDE_POLL:
+                hideResult(query.getMessage().getChatId(), query.getMessage().getMessageId(), poll);
                 break;
 
         }
@@ -74,6 +76,23 @@ public class PollBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    private void deletePoll(Long chatId, Integer messageId, Poll poll) {
+        pollService.deletePollById(poll.getPollId(), chatId);
+        editMessage(chatId, messageId, "deleted", null);
+    }
+
+    private void hideResult(Long chatId, Integer messageId, Poll poll) {
+        editMessage(chatId, messageId, poll.toShortView(), ReplyKeyboard.buttonsForPollShortView(poll.getPollId()));
+    }
+
+    private void showResult(Long chatId, Integer messageId, Poll poll) {
+        editMessage(chatId, messageId, poll.toView(), ReplyKeyboard.buttonsForPollFullView(poll.getPollId()));
+    }
+
+    private String extractPollId(String data) {
+        return data.substring(CommandBtn.getCommand(data).name().length() + 1, data.length());
     }
 
     private void handleIncomingMessage(Update update) {
@@ -93,19 +112,18 @@ public class PollBot extends TelegramLongPollingBot {
         if (telegramUser.status() == UserProcessStatus.CREATE_POLL) {
             telegramUser.pollMachine().create(incomingMessage.getText());
             PollExchange pollExchange = telegramUser.pollMachine().getPollExchange();
-            sendTextMessage(incomingMessage.getChatId(), pollExchange.getResponseText(), incomingMessage.getMessageId(), pollExchange.getReplyKeyboardMarkup());
+            sendTextMessage(incomingMessage.getChatId(), pollExchange.getResponseText(), pollExchange.getReplyKeyboardMarkup());
         } else if (KeyboardText.SHOW_CREATED_POLLS.equals(incomingMessage.getText())) {
             if (telegramUser.myPolls().size() == 0) {
-                sendTextMessage(incomingMessage.getChatId(), "Сейчас нет ни одного опросника. Создайте " + SMILING_FACE_WITH_SMILING_EYES.toString(), null, ReplyKeyboard.getKeyboardOnUserStart());
+                sendTextMessage(incomingMessage.getChatId(), "Сейчас нет ни одного опросника. Создайте " + SMILING_FACE_WITH_SMILING_EYES.toString(), ReplyKeyboard.getKeyboardOnUserStart());
             }
             for (Poll poll : telegramUser.myPolls()) {
-                sendButtonMessage(incomingMessage.getChatId(), poll.toShortView(), PollService.createButtonsForPollView(poll.getPollId()));
+                sendButtonMessage(incomingMessage.getChatId(), poll.toShortView(), ReplyKeyboard.buttonsForPollShortView(poll.getPollId()));
             }
         } else {
             sendTextMessage(
                     incomingMessage.getChatId(),
                     "Выберите действие",
-                    incomingMessage.getMessageId(),
                     ReplyKeyboard.getKeyboardOnUserStart()
             );
         }
@@ -116,8 +134,11 @@ public class PollBot extends TelegramLongPollingBot {
         TelegramUser result = telegramUsers.stream()
                 .filter(u -> u.userId().equals(chat.getId()))
                 .findAny()
-                .orElse(createTelegramUser(chat));
-        telegramUsers.add(result);
+                .orElse(null);
+        if (result == null) {
+            result = createTelegramUser(chat);
+            telegramUsers.add(result);
+        }
         return result;
     }
 
@@ -136,12 +157,11 @@ public class PollBot extends TelegramLongPollingBot {
         return user;
     }
 
-    private void sendTextMessage(Long chatId, String responseMessage, Integer messageId, ReplyKeyboardMarkup keyboardMarkup) {
+    private void sendTextMessage(Long chatId, String responseMessage, ReplyKeyboardMarkup keyboardMarkup) {
         SendMessage sendMessage = new SendMessage();
-//        sendMessage.setReplyToMessageId(messageId);
-        sendMessage.enableMarkdown(true);
-        sendMessage.setReplyMarkup(keyboardMarkup);
-        sendMessage.setChatId(chatId)
+        sendMessage.enableMarkdown(true)
+                .setReplyMarkup(keyboardMarkup)
+                .setChatId(chatId)
                 .setText(responseMessage);
         try {
             sendMessage(sendMessage);
@@ -164,6 +184,20 @@ public class PollBot extends TelegramLongPollingBot {
         }
     }
 
+
+    private void editMessage(Long chatId, Integer messageId, String responseText, InlineKeyboardMarkup markup) {
+        EditMessageText editMessageText = new EditMessageText();
+        editMessageText.setChatId(chatId);
+        editMessageText.setText(responseText);
+        editMessageText.setReplyMarkup(markup);
+        editMessageText.setMessageId(messageId);
+        editMessageText.enableMarkdown(true);
+        try {
+            editMessageText(editMessageText);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public String getBotUsername() {

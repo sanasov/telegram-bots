@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"myPolls", "pollMachine"})
 public class TelegramUser {
     private Long userId;
     private String firstName;
