@@ -59,6 +59,10 @@ public class Poll {
         return wrapper.toBold(title);
     }
 
+    public List<AnswerOption> getAnswerOptions() {
+        return possibleAnswers;
+    }
+
     public String toView() {
         MarkDownWrapper wrapper = new MarkDownWrapper();
         return wrapper.toBold(question) + "\n"
@@ -74,6 +78,10 @@ public class Poll {
                 .get();
     }
 
+    public String votingView() {
+        return new MarkDownWrapper().toBold(question);
+    }
+
     public Integer totalVotedAmount() {
         return possibleAnswers.stream()
                 .map(AnswerOption::votedAmount)
@@ -84,6 +92,4 @@ public class Poll {
     private String personVotedView(Integer votedAmount) {
         return !votedAmount.equals(1) ? votedAmount + " persons voted" : " 1 person voted";
     }
-
-
 }

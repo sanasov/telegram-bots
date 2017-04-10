@@ -7,7 +7,9 @@ public enum CommandBtn {
     POST_POLL("Опубликовать"),
     DELETE_POLL("Удалить"),
     SHOW_RESULT("Просмотреть"),
-    HIDE_POLL("Скрыть");
+    HIDE_POLL("Скрыть"),
+    VOTE("Голосовать"),
+    PICKED_ANSWER("");
 
     private final String title;
     private final static String delimiter = "#";
@@ -25,11 +27,11 @@ public enum CommandBtn {
         return name() + delimiter;
     }
 
-    public static CommandBtn getCommand(String buttonId) {
+    public static CommandBtn getCommandBtn(String buttonId) {
         String commandBtnName = buttonId.substring(0, buttonId.indexOf("#"));
         return CommandBtn.valueOf(commandBtnName);
     }
     public static void main(String[] args) {
-        System.out.println(CommandBtn.getCommand("POST_POLL#vmwok_ds").title());
+        System.out.println(CommandBtn.getCommandBtn("POST_POLL#vmwok_ds").title());
     }
 }

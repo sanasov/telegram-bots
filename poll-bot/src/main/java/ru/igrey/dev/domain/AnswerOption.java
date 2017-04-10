@@ -4,8 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import ru.igrey.dev.MarkDownWrapper;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @EqualsAndHashCode
 @ToString
@@ -21,26 +21,26 @@ public class AnswerOption {
         return answer;
     }
 
-    List<String> userIdList;
+    Set<Long> userIdSet;
 
-    public List<String> userIdList() {
-        if(userIdList == null){
-            userIdList = new ArrayList<>();
+    public Set<Long> userIdSet() {
+        if(userIdSet == null){
+            userIdSet = new HashSet<>();
         }
-        return userIdList;
+        return userIdSet;
     }
 
     public Integer votedAmount() {
-        return userIdList().size();
+        return userIdSet().size();
     }
 
-    public void addVotedUserId(String userId) {
-        userIdList().add(userId);
+    public void addVotedUserId(Long userId) {
+        userIdSet().add(userId);
     }
 
     public String view() {
         MarkDownWrapper wrapper = new MarkDownWrapper();
-        return answer + "\n"
+        return answer + "        "
                 + wrapper.toInlineFixedWidthCode(personVotedView());
     }
 

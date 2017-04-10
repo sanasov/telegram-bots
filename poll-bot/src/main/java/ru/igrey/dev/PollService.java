@@ -12,7 +12,7 @@ public class PollService {
 
 
     public Poll findPollById(String id) {
-        return PollBot.telegramUsers.stream()
+        return TelegramUserService.telegramUsers.stream()
                 .map(TelegramUser::myPolls)
                 .flatMap(Collection::stream)
                 .filter(poll -> poll.getPollId().equals(id))
@@ -21,7 +21,7 @@ public class PollService {
     }
 
     public void deletePollById(String pollId, Long chatId) {
-        TelegramUser user = PollBot.telegramUsers.stream()
+        TelegramUser user = TelegramUserService.telegramUsers.stream()
                 .filter(telegramUser -> telegramUser.userId().equals(chatId))
                 .findFirst()
                 .get();

@@ -4,15 +4,14 @@ import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
+import ru.igrey.dev.domain.poll.Poll;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.igrey.dev.CommandBtn.*;
-import static ru.igrey.dev.CommandBtn.HIDE_POLL;
-import static ru.igrey.dev.KeyboardText.COMPLETE_CREATE_POLL;
-import static ru.igrey.dev.KeyboardText.CREATE_POLL;
-import static ru.igrey.dev.KeyboardText.SHOW_CREATED_POLLS;
+import static ru.igrey.dev.KeyboardText.*;
 
 /**
  * Created by sanasov on 04.04.2017.
@@ -67,18 +66,10 @@ public class ReplyKeyboard {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         List<InlineKeyboardButton> buttonRow = new ArrayList<>();
 
-        InlineKeyboardButton postBtn = new InlineKeyboardButton();
-        postBtn.setText(POST_POLL.title());
-        postBtn.setCallbackData(POST_POLL.nameWithDelimeter() + pollId);
-        InlineKeyboardButton deleteBtn = new InlineKeyboardButton();
-        deleteBtn.setText(DELETE_POLL.title());
-        deleteBtn.setCallbackData(DELETE_POLL.nameWithDelimeter() + pollId);
-        InlineKeyboardButton showBtn = new InlineKeyboardButton();
-        showBtn.setText(SHOW_RESULT.title());
-        showBtn.setCallbackData(SHOW_RESULT.nameWithDelimeter() + pollId);
-        buttonRow.add(showBtn);
-        buttonRow.add(postBtn);
-        buttonRow.add(deleteBtn);
+        buttonRow.add(createInlineKeyboardButton(SHOW_RESULT.nameWithDelimeter() + pollId, SHOW_RESULT.title()));
+        buttonRow.add(createInlineKeyboardButton(POST_POLL.nameWithDelimeter() + pollId, POST_POLL.title()));
+        buttonRow.add(createInlineKeyboardButton(DELETE_POLL.nameWithDelimeter() + pollId, DELETE_POLL.title()));
+
         keyboard.add(buttonRow);
         markup.setKeyboard(keyboard);
         return markup;
@@ -89,12 +80,33 @@ public class ReplyKeyboard {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         List<InlineKeyboardButton> buttonRow = new ArrayList<>();
 
-        InlineKeyboardButton hideBtn = new InlineKeyboardButton();
-        hideBtn.setText(HIDE_POLL.title());
-        hideBtn.setCallbackData(HIDE_POLL.nameWithDelimeter() + pollId);
-        buttonRow.add(hideBtn);
+        buttonRow.add(createInlineKeyboardButton(VOTE.nameWithDelimeter() + pollId, VOTE.title()));
+        buttonRow.add(createInlineKeyboardButton(HIDE_POLL.nameWithDelimeter() + pollId, HIDE_POLL.title()));
+
         keyboard.add(buttonRow);
         markup.setKeyboard(keyboard);
         return markup;
+    }
+
+    public static InlineKeyboardMarkup pollAnswersButtons(Poll poll) {
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        List<InlineKeyboardButton> buttonRow = new ArrayList<>();
+
+        buttonRow.addAll(poll.getAnswerOptions().stream()
+                .map(answerOption -> createInlineKeyboardButton(PICKED_ANSWER.nameWithDelimeter() + answerOption.answer() + "#" + poll.getPollId(), answerOption.answer()))
+                .collect(Collectors.toList())
+        );
+
+        keyboard.add(buttonRow);
+        markup.setKeyboard(keyboard);
+        return markup;
+    }
+
+    private static InlineKeyboardButton createInlineKeyboardButton(String buttonId, String label) {
+        InlineKeyboardButton btn = new InlineKeyboardButton();
+        btn.setText(label);
+        btn.setCallbackData(buttonId);
+        return btn;
     }
 }
