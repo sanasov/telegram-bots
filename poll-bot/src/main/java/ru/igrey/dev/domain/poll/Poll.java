@@ -2,6 +2,7 @@ package ru.igrey.dev.domain.poll;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import ru.igrey.dev.Emoji;
 import ru.igrey.dev.MarkDownWrapper;
 import ru.igrey.dev.domain.AnswerOption;
 
@@ -60,9 +61,9 @@ public class Poll {
 
     public String toView() {
         MarkDownWrapper wrapper = new MarkDownWrapper();
-        return wrapper.toBold(title) + "\n"
-                + question + "\n"
+        return wrapper.toBold(question) + "\n"
                 + answersView() + "\n"
+                + Emoji.BUSTS_IN_SILHOUETTE.toString() + "  "
                 + wrapper.toInlineFixedWidthCode(personVotedView(totalVotedAmount()));
     }
 

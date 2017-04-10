@@ -160,8 +160,9 @@ public enum Emoji {
     LARGE_ORANGE_DIAMOND('\uD83D', '\uDD36'),
     HUNDRED_POINTS_SYMBOL('\uD83D', '\uDCAF'),
     ROUND_PUSHPIN('\uD83D', '\uDCCD'),
-    WAVING_HAND_SIGN('\uD83D', '\uDC4B');
-
+    WAVING_HAND_SIGN('\uD83D', '\uDC4B'),
+    RED_HEART('\u2764', null),
+    BUSTS_IN_SILHOUETTE('\uD83D', '\uDC65');
     Character firstChar;
     Character secondChar;
 
