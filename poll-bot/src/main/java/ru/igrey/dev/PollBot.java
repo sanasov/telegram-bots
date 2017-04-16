@@ -53,16 +53,10 @@ public class PollBot extends TelegramLongPollingBot {
         switch (CommandBtn.getCommandBtn(query.getData())) {
             case DELETE_POLL:
                 deletePoll(query.getMessage().getChatId(), query.getMessage().getMessageId(), poll);
-                answer.setText(new MarkDownWrapper().toInlineFixedWidthCode(poll.getTitle() + " удален"));
-                break;
-            case SHOW_RESULT:
-                showResult(query.getMessage().getChatId(), query.getMessage().getMessageId(), poll);
+                answer.setText(new MarkDownWrapper().toInlineFixedWidthCode( " удален"));
                 break;
             case POST_POLL:
                 sendButtonMessage(query.getMessage().getChatId(), POST_POLL.title(), null);
-                break;
-            case HIDE_POLL:
-                hideResult(query.getMessage().getChatId(), query.getMessage().getMessageId(), poll);
                 break;
             case VOTE:
                 showVoteMode(query.getMessage().getChatId(), query.getMessage().getMessageId(), poll);
@@ -82,15 +76,11 @@ public class PollBot extends TelegramLongPollingBot {
 
     private void deletePoll(Long chatId, Integer messageId, Poll poll) {
         pollService.deletePollById(poll.getPollId(), chatId);
-        editMessage(chatId, messageId, "deleted", null);
-    }
-
-    private void hideResult(Long chatId, Integer messageId, Poll poll) {
-        editMessage(chatId, messageId, poll.toShortView(), ReplyKeyboard.buttonsForPollShortView(poll.getPollId()));
+        editMessage(chatId, messageId, Emoji.HEAVY_MULTIPLICATION_X.toString(), null);
     }
 
     private void showResult(Long chatId, Integer messageId, Poll poll) {
-        editMessage(chatId, messageId, poll.toView(), ReplyKeyboard.buttonsForPollFullView(poll.getPollId()));
+        editMessage(chatId, messageId, poll.toView(), ReplyKeyboard.buttonsForPollShortView(poll.getPollId()));
     }
 
     private void showVoteMode(Long chatId, Integer messageId, Poll poll) {
@@ -140,7 +130,7 @@ public class PollBot extends TelegramLongPollingBot {
                 sendTextMessage(incomingMessage.getChatId(), "Сейчас нет ни одного опросника. Создайте " + SMILING_FACE_WITH_SMILING_EYES.toString(), ReplyKeyboard.getKeyboardOnUserStart());
             }
             for (Poll poll : telegramUser.myPolls()) {
-                sendButtonMessage(incomingMessage.getChatId(), poll.toShortView(), ReplyKeyboard.buttonsForPollShortView(poll.getPollId()));
+                sendButtonMessage(incomingMessage.getChatId(), poll.toView(), ReplyKeyboard.buttonsForPollShortView(poll.getPollId()));
             }
         } else {
             sendTextMessage(

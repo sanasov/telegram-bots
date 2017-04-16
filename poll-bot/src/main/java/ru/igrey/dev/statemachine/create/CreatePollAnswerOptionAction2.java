@@ -4,7 +4,7 @@ import ru.igrey.dev.ReplyKeyboard;
 import ru.igrey.dev.domain.AnswerOption;
 import ru.igrey.dev.domain.poll.PollStatus;
 
-import static ru.igrey.dev.statemachine.create.ReponseMessagesInCreatingPollProcess.SECOND_ANSWER_ADDED;
+import static ru.igrey.dev.statemachine.create.ResponseMessagesInCreatingPollProcess.SECOND_ANSWER_ADDED;
 
 /**
  * Created by sanasov on 04.04.2017.

@@ -8,7 +8,6 @@ import ru.igrey.dev.domain.TelegramUser;
 public class PollStateMachine {
 
     private CreatePollAction newPollAction;
-    private CreatePollAction namePollAction;
     private CreatePollAction answerOptionAction1;
     private CreatePollAction answerAnotherOptionAction;
     private CreatePollAction answerOptionAction2;
@@ -24,7 +23,6 @@ public class PollStateMachine {
     public PollStateMachine(PollExchange pollExchange) {
         this.pollExchange = pollExchange;
         newPollAction = new CreateNewPollAction(this);
-        namePollAction = new CreatePollNameAction(this);
         answerOptionAction1 = new CreatePollAnswerOptionAction1(this);
         answerOptionAction2 = new CreatePollAnswerOptionAction2(this);
         answerAnotherOptionAction = new CreatePollAnotherAnswerOptionAction(this);
@@ -42,8 +40,6 @@ public class PollStateMachine {
         switch (pollExchange.getStatus()) {
             case NEW:
                 return newPollAction;
-            case CREATE_NAME:
-                return namePollAction;
             case CREATE_QUESTION:
                 return questionPollAction;
             case CREATE_ANSWER1:
@@ -69,9 +65,6 @@ public class PollStateMachine {
     }
 
     //getter setter
-    public CreatePollAction getNamePollAction() {
-        return namePollAction;
-    }
 
     public CreatePollAction getAnswerOptionAction1() {
         return answerOptionAction1;

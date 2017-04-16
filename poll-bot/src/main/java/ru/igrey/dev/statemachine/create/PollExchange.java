@@ -6,7 +6,7 @@ import ru.igrey.dev.domain.poll.PollStatus;
 
 import java.time.LocalDateTime;
 
-import static ru.igrey.dev.statemachine.create.ReponseMessagesInCreatingPollProcess.NAME_YOUR_POLL;
+import static ru.igrey.dev.statemachine.create.ResponseMessagesInCreatingPollProcess.WRITE_QUESTION;
 
 /**
  * Created by sanasov on 07.04.2017.
@@ -29,7 +29,7 @@ public class PollExchange {
 
     public static PollExchange createNewPollExchange() {
         Poll newPoll = new Poll(LocalDateTime.now().toString());
-        return new PollExchange(newPoll, null, NAME_YOUR_POLL, PollStatus.NEW);
+        return new PollExchange(newPoll, null, WRITE_QUESTION, PollStatus.NEW);
     }
 
 

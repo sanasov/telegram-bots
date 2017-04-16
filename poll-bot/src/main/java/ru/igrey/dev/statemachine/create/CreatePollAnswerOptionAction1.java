@@ -3,7 +3,7 @@ package ru.igrey.dev.statemachine.create;
 import ru.igrey.dev.domain.AnswerOption;
 import ru.igrey.dev.domain.poll.PollStatus;
 
-import static ru.igrey.dev.statemachine.create.ReponseMessagesInCreatingPollProcess.ADD_SECOND_ANSWER;
+import static ru.igrey.dev.statemachine.create.ResponseMessagesInCreatingPollProcess.ADD_SECOND_ANSWER;
 
 /**
  * Created by sanasov on 04.04.2017.

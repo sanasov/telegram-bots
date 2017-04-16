@@ -6,8 +6,8 @@ import ru.igrey.dev.domain.poll.PollStatus;
 
 import static ru.igrey.dev.KeyboardText.COMPLETE_CREATE_POLL;
 import static ru.igrey.dev.domain.UserProcessStatus.START;
-import static ru.igrey.dev.statemachine.create.ReponseMessagesInCreatingPollProcess.ANOTHER_ANSWER_ADDED;
-import static ru.igrey.dev.statemachine.create.ReponseMessagesInCreatingPollProcess.POLL_CREATED;
+import static ru.igrey.dev.statemachine.create.ResponseMessagesInCreatingPollProcess.ANOTHER_ANSWER_ADDED;
+import static ru.igrey.dev.statemachine.create.ResponseMessagesInCreatingPollProcess.POLL_CREATED;
 
 /**
  * Created by sanasov on 04.04.2017.

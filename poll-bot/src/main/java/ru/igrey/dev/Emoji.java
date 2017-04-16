@@ -75,7 +75,6 @@ public enum Emoji {
     PENCIL(null, '\u270F'),
     BLACK_NIB(null, '\u2712'),
     HEAVY_CHECK_MARK(null, '\u2714'),
-    HEAVY_MULTIPLICATION_X(null, '\u2716'),
     SPARKLES(null, '\u2728'),
     EIGHT_SPOKED_ASTERISK(null, '\u2733'),
     EIGHT_POINTED_BLACK_STAR(null, '\u2734'),
@@ -162,7 +161,10 @@ public enum Emoji {
     ROUND_PUSHPIN('\uD83D', '\uDCCD'),
     WAVING_HAND_SIGN('\uD83D', '\uDC4B'),
     RED_HEART('\u2764', null),
-    BUSTS_IN_SILHOUETTE('\uD83D', '\uDC65');
+    BUSTS_IN_SILHOUETTE('\uD83D', '\uDC65'),
+    HEAVY_MULTIPLICATION_X('\u2716', null),
+    BLACK_SMALL_SQUARE('\u25AA',null),
+    WHITE_SMALL_SQUARE('\u25AB',null);
     Character firstChar;
     Character secondChar;
 

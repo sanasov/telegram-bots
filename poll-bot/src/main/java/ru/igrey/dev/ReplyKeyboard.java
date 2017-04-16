@@ -66,22 +66,9 @@ public class ReplyKeyboard {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         List<InlineKeyboardButton> buttonRow = new ArrayList<>();
 
-        buttonRow.add(createInlineKeyboardButton(SHOW_RESULT.nameWithDelimeter() + pollId, SHOW_RESULT.title()));
+        buttonRow.add(createInlineKeyboardButton(VOTE.nameWithDelimeter() + pollId, VOTE.title()));
         buttonRow.add(createInlineKeyboardButton(POST_POLL.nameWithDelimeter() + pollId, POST_POLL.title()));
         buttonRow.add(createInlineKeyboardButton(DELETE_POLL.nameWithDelimeter() + pollId, DELETE_POLL.title()));
-
-        keyboard.add(buttonRow);
-        markup.setKeyboard(keyboard);
-        return markup;
-    }
-
-    public static InlineKeyboardMarkup buttonsForPollFullView(String pollId) {
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-        List<InlineKeyboardButton> buttonRow = new ArrayList<>();
-
-        buttonRow.add(createInlineKeyboardButton(VOTE.nameWithDelimeter() + pollId, VOTE.title()));
-        buttonRow.add(createInlineKeyboardButton(HIDE_POLL.nameWithDelimeter() + pollId, HIDE_POLL.title()));
 
         keyboard.add(buttonRow);
         markup.setKeyboard(keyboard);

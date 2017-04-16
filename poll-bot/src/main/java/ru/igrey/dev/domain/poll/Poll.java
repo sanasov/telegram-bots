@@ -12,13 +12,11 @@ import java.util.List;
 @EqualsAndHashCode(exclude = "author")
 @ToString(exclude = {"author", "status"})
 public class Poll {
-    private String title;
     private String pollId;
     private String question;
     private List<AnswerOption> possibleAnswers;
 
-    public Poll(String title, String pollId, String question, List<AnswerOption> possibleAnswers) {
-        this.title = title;
+    public Poll(String pollId, String question, List<AnswerOption> possibleAnswers) {
         this.pollId = pollId;
         this.question = question;
         this.possibleAnswers = possibleAnswers;
@@ -31,12 +29,8 @@ public class Poll {
     public Poll() {
     }
 
-    public Poll toNewName(String newName) {
-        return new Poll(newName, pollId, question, possibleAnswers);
-    }
-
     public Poll toNewQuestion(String newQuestion) {
-        return new Poll(title, pollId, newQuestion, possibleAnswers);
+        return new Poll(pollId, newQuestion, possibleAnswers);
     }
 
     public void addAnswer(AnswerOption answerOption) {
@@ -48,15 +42,6 @@ public class Poll {
 
     public String getPollId() {
         return pollId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String toShortView() {
-        MarkDownWrapper wrapper = new MarkDownWrapper();
-        return wrapper.toBold(title);
     }
 
     public List<AnswerOption> getAnswerOptions() {
@@ -73,7 +58,7 @@ public class Poll {
 
     private String answersView() {
         return possibleAnswers.stream()
-                .map(AnswerOption::view)
+                .map(answerOption -> answerOption.view(totalVotedAmount()))
                 .reduce((a, b) -> a + "\n" + b)
                 .get();
     }

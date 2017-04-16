@@ -16,6 +16,6 @@ public class CreateNewPollAction implements CreatePollAction {
     @Override
     public void applyToPoll(String possibleAnswer) {
         machine.setPollExchange(createNewPollExchange());
-        machine.setCurrentAction(machine.getNamePollAction());
+        machine.setCurrentAction(machine.getQuestionPollAction());
     }
 }
