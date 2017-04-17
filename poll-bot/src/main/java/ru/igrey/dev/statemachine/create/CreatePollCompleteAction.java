@@ -1,5 +1,7 @@
 package ru.igrey.dev.statemachine.create;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.igrey.dev.ReplyKeyboard;
 import ru.igrey.dev.domain.poll.PollStatus;
 
@@ -9,6 +11,7 @@ import ru.igrey.dev.domain.poll.PollStatus;
 public class CreatePollCompleteAction implements CreatePollAction {
 
     private PollStateMachine machine;
+    private static final Logger logger = LoggerFactory.getLogger(PollExchange.class);
 
     public CreatePollCompleteAction(PollStateMachine machine) {
         this.machine = machine;
@@ -20,6 +23,7 @@ public class CreatePollCompleteAction implements CreatePollAction {
         machine.setCurrentAction(machine.getNewPollAction());
         pollExchange.setStatus(PollStatus.NEW);
         pollExchange.setReplyKeyboardMarkup(ReplyKeyboard.getKeyboardOnUserStart());
+        logger.info(machine.getAuthor() + " created new poll " + pollExchange.getPoll().getPollId());
     }
 
 }

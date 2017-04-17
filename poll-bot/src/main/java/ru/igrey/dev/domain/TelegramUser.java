@@ -94,4 +94,13 @@ public class TelegramUser {
     public void changeStatus(UserProcessStatus status) {
         this.status = status;
     }
+
+
+    @Override
+    public String toString() {
+        return "userId=" + userId +
+                ", firstName= " + firstName +
+                ", lastName= " + lastName +
+                ", userName= " + userName;
+    }
 }

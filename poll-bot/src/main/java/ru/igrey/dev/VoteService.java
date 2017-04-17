@@ -1,5 +1,7 @@
 package ru.igrey.dev;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.igrey.dev.domain.AnswerOption;
 import ru.igrey.dev.domain.poll.Poll;
 
@@ -10,7 +12,7 @@ public class VoteService {
     private Poll poll;
     private String answer;
     private Long votedUserId;
-
+    private static final Logger logger = LoggerFactory.getLogger(VoteService.class);
 
     public VoteService(Long votedUserId, Poll poll, String answer) {
         this.poll = poll;
@@ -24,6 +26,7 @@ public class VoteService {
                 .filter(answerOpt -> answerOpt.answer().equals(answer))
                 .findAny()
                 .get();
+        logger.info("vote: votedUserId " + votedUserId + ", pollId " + poll.getPollId());
         answerOption.addVotedUserId(votedUserId);
     }
 

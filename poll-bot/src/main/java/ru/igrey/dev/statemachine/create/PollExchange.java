@@ -4,8 +4,6 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import ru.igrey.dev.domain.poll.Poll;
 import ru.igrey.dev.domain.poll.PollStatus;
 
-import java.time.LocalDateTime;
-
 import static ru.igrey.dev.statemachine.create.ResponseMessagesInCreatingPollProcess.WRITE_QUESTION;
 
 /**
@@ -16,6 +14,7 @@ public class PollExchange {
     private ReplyKeyboardMarkup replyKeyboardMarkup;
     private String responseText;
     private PollStatus status;
+
 
     public PollExchange() {
     }
@@ -28,7 +27,7 @@ public class PollExchange {
     }
 
     public static PollExchange createNewPollExchange() {
-        Poll newPoll = new Poll(LocalDateTime.now().toString());
+        Poll newPoll = new Poll(String.valueOf(System.currentTimeMillis()));
         return new PollExchange(newPoll, null, WRITE_QUESTION, PollStatus.NEW);
     }
 

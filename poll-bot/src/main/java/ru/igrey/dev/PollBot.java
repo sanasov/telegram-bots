@@ -38,9 +38,57 @@ public class PollBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
 
         if (update.hasMessage()) {
-            handleIncomingMessage(update);
+            handleIncomingMessage(update.getMessage());
         } else if (update.hasCallbackQuery()) {
             handleButtonClick(update);
+        }
+    }
+
+    private void handleIncomingMessage(Message message) {
+        logger.info("Incoming message: " + message.getText());
+        logger.info("From user: " + message.getFrom() + "; chatId: " + message.getChat().getId());
+
+        if (message.getChat().isGroupChat()) {
+            handleIncomingMessageFromGroupChat((message));
+        } else if (message.getChat().isUserChat()) {
+            handlePrivateIncomingMessage(message);
+        }
+    }
+
+    private void handleIncomingMessageFromGroupChat(Message message) {
+        Poll poll = pollService.findPollById(
+                message.getText()
+                        .replace("/start@SeanPollBot ", "")
+        );
+        sendButtonMessage(message.getChatId(), poll.toView(), ReplyKeyboard.buttonsForPollViewInGroupChat(poll.getPollId()));
+    }
+
+    private void handlePrivateIncomingMessage(Message incomingMessage) {
+        TelegramUser telegramUser = new TelegramUserService().getOrCreateTelegramUserByUserId(incomingMessage.getFrom());
+        Long chatId = incomingMessage.getChatId();
+        String incomingMessageText = incomingMessage.getText();
+        if (incomingMessageText.equals(KeyboardText.CREATE_POLL)
+                && telegramUser.status() != UserProcessStatus.CREATE_POLL) {
+            telegramUser.setStatus(UserProcessStatus.CREATE_POLL);
+        }
+
+        if (telegramUser.status() == UserProcessStatus.CREATE_POLL) {
+            telegramUser.pollMachine().create(incomingMessageText);
+            PollExchange pollExchange = telegramUser.pollMachine().getPollExchange();
+            sendTextMessage(chatId, pollExchange.getResponseText(), pollExchange.getReplyKeyboardMarkup());
+        } else if (KeyboardText.SHOW_CREATED_POLLS.equals(incomingMessageText)) {
+            if (telegramUser.myPolls().size() == 0) {
+                sendTextMessage(chatId, "Сейчас нет ни одного опросника. Создайте " + SMILING_FACE_WITH_SMILING_EYES.toString(), ReplyKeyboard.getKeyboardOnUserStart());
+            }
+            for (Poll poll : telegramUser.myPolls()) {
+                sendButtonMessage(chatId, poll.toView(), ReplyKeyboard.buttonsForPollViewInOwnUserChat(poll.getPollId()));
+            }
+        } else {
+            sendTextMessage(
+                    chatId,
+                    "Выберите действие",
+                    ReplyKeyboard.getKeyboardOnUserStart()
+            );
         }
     }
 
@@ -49,24 +97,28 @@ public class PollBot extends TelegramLongPollingBot {
         AnswerCallbackQuery answer = new AnswerCallbackQuery();
         answer.setCallbackQueryId(query.getId());
         Poll poll = pollService.findPollById(extractPollId(query.getData()));
-
+        Message message = query.getMessage();
         switch (CommandBtn.getCommandBtn(query.getData())) {
             case DELETE_POLL:
                 deletePoll(query.getMessage().getChatId(), query.getMessage().getMessageId(), poll);
-                answer.setText(new MarkDownWrapper().toInlineFixedWidthCode( " удален"));
+                answer.setText(new MarkDownWrapper().toInlineFixedWidthCode("удален"));
                 break;
             case POST_POLL:
-                sendButtonMessage(query.getMessage().getChatId(), POST_POLL.title(), null);
+                sendButtonMessage(message.getChatId(), POST_POLL.title(), null);
                 break;
             case VOTE:
-                showVoteMode(query.getMessage().getChatId(), query.getMessage().getMessageId(), poll);
+                showVoteMode(message.getChatId(), message.getMessageId(), poll);
+                answer.setText(new MarkDownWrapper().toInlineFixedWidthCode("вы проголосовали"));
                 break;
             case PICKED_ANSWER:
-                vote(query.getMessage().getChatId(), query.getMessage().getMessageId(), poll, extractAnswer(query.getData()));
+                vote(message.getFrom().getId().longValue(),
+                        message.getChatId(),
+                        message.getMessageId(),
+                        poll,
+                        extractAnswer(query.getData()),
+                        message.getChat().isGroupChat());
                 break;
-
         }
-
         try {
             answerCallbackQuery(answer);
         } catch (TelegramApiException e) {
@@ -79,18 +131,28 @@ public class PollBot extends TelegramLongPollingBot {
         editMessage(chatId, messageId, Emoji.HEAVY_MULTIPLICATION_X.toString(), null);
     }
 
-    private void showResult(Long chatId, Integer messageId, Poll poll) {
-        editMessage(chatId, messageId, poll.toView(), ReplyKeyboard.buttonsForPollShortView(poll.getPollId()));
-    }
-
     private void showVoteMode(Long chatId, Integer messageId, Poll poll) {
         editMessage(chatId, messageId, poll.votingView(), ReplyKeyboard.pollAnswersButtons(poll));
     }
 
-    private void vote(Long chatId, Integer messageId, Poll poll, String answer) {
-        new VoteService(chatId, poll, answer).vote();
-        showResult(chatId, messageId, poll);
+    private void vote(Long userId, Long chatId, Integer messageId, Poll poll, String answer, boolean isGroupChat) {
+        new VoteService(userId, poll, answer).vote();
+        if (isGroupChat) {
+            showResultInGroupChat(chatId, messageId, poll);
+        } else {
+            showResultInOwnChat(chatId, messageId, poll);
+        }
     }
+
+    private void showResultInOwnChat(Long chatId, Integer messageId, Poll poll) {
+        editMessage(chatId, messageId, poll.toView(), ReplyKeyboard.buttonsForPollViewInOwnUserChat(poll.getPollId()));
+    }
+
+
+    private void showResultInGroupChat(Long chatId, Integer messageId, Poll poll) {
+        editMessage(chatId, messageId, poll.toView(), ReplyKeyboard.buttonsForPollViewInGroupChat(poll.getPollId()));
+    }
+
 
     private String extractPollId(String data) {
         if (CommandBtn.getCommandBtn(data) == CommandBtn.PICKED_ANSWER) {
@@ -106,41 +168,6 @@ public class PollBot extends TelegramLongPollingBot {
                 .replace(pollId, "")
                 .replace("#", "");
     }
-
-    private void handleIncomingMessage(Update update) {
-        TelegramUser telegramUser = new TelegramUserService().getOrCreateTelegramUserByUserId(update.getMessage().getChat());
-        Message incomingMessage = update.getMessage();
-        if (incomingMessage.getChat().isGroupChat()) {
-            return;
-        }
-        logger.info("User: " + incomingMessage.getChat());
-        logger.info("Text: " + incomingMessage.getText());
-
-        if (incomingMessage.getText().equals(KeyboardText.CREATE_POLL)
-                && telegramUser.status() != UserProcessStatus.CREATE_POLL) {
-            telegramUser.setStatus(UserProcessStatus.CREATE_POLL);
-        }
-
-        if (telegramUser.status() == UserProcessStatus.CREATE_POLL) {
-            telegramUser.pollMachine().create(incomingMessage.getText());
-            PollExchange pollExchange = telegramUser.pollMachine().getPollExchange();
-            sendTextMessage(incomingMessage.getChatId(), pollExchange.getResponseText(), pollExchange.getReplyKeyboardMarkup());
-        } else if (KeyboardText.SHOW_CREATED_POLLS.equals(incomingMessage.getText())) {
-            if (telegramUser.myPolls().size() == 0) {
-                sendTextMessage(incomingMessage.getChatId(), "Сейчас нет ни одного опросника. Создайте " + SMILING_FACE_WITH_SMILING_EYES.toString(), ReplyKeyboard.getKeyboardOnUserStart());
-            }
-            for (Poll poll : telegramUser.myPolls()) {
-                sendButtonMessage(incomingMessage.getChatId(), poll.toView(), ReplyKeyboard.buttonsForPollShortView(poll.getPollId()));
-            }
-        } else {
-            sendTextMessage(
-                    incomingMessage.getChatId(),
-                    "Выберите действие",
-                    ReplyKeyboard.getKeyboardOnUserStart()
-            );
-        }
-    }
-
 
     private void sendTextMessage(Long chatId, String responseMessage, ReplyKeyboardMarkup keyboardMarkup) {
         SendMessage sendMessage = new SendMessage();

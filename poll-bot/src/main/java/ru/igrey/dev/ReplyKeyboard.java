@@ -17,6 +17,8 @@ import static ru.igrey.dev.KeyboardText.*;
  * Created by sanasov on 04.04.2017.
  */
 public class ReplyKeyboard {
+    public static final String SELECT_GROUP_URL = "https://telegram.me/seanpollbot?startgroup=";
+
     public static ReplyKeyboardMarkup getKeyboardOnUserStart() {
         // Создаем клавиуатуру
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
@@ -61,13 +63,24 @@ public class ReplyKeyboard {
     }
 
 
-    public static InlineKeyboardMarkup buttonsForPollShortView(String pollId) {
+    public static InlineKeyboardMarkup buttonsForPollViewInGroupChat(String pollId) {
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        List<InlineKeyboardButton> buttonRow = new ArrayList<>();
+        buttonRow.add(createInlineKeyboardButton(VOTE.nameWithDelimeter() + pollId, VOTE.title()));
+        buttonRow.add(createPublishPollButton(pollId, POST_POLL.title()));
+        keyboard.add(buttonRow);
+        markup.setKeyboard(keyboard);
+        return markup;
+    }
+
+    public static InlineKeyboardMarkup buttonsForPollViewInOwnUserChat(String pollId) {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         List<InlineKeyboardButton> buttonRow = new ArrayList<>();
 
         buttonRow.add(createInlineKeyboardButton(VOTE.nameWithDelimeter() + pollId, VOTE.title()));
-        buttonRow.add(createInlineKeyboardButton(POST_POLL.nameWithDelimeter() + pollId, POST_POLL.title()));
+        buttonRow.add(createPublishPollButton(pollId, POST_POLL.title()));
         buttonRow.add(createInlineKeyboardButton(DELETE_POLL.nameWithDelimeter() + pollId, DELETE_POLL.title()));
 
         keyboard.add(buttonRow);
@@ -93,7 +106,13 @@ public class ReplyKeyboard {
     private static InlineKeyboardButton createInlineKeyboardButton(String buttonId, String label) {
         InlineKeyboardButton btn = new InlineKeyboardButton();
         btn.setText(label);
+        btn.setSwitchInlineQuery("setSwitchInlineQuery");
+        btn.setSwitchInlineQueryCurrentChat("setSwitchInlineQueryCurrentChat");
         btn.setCallbackData(buttonId);
         return btn;
+    }
+
+    private static InlineKeyboardButton createPublishPollButton(String buttonId, String label) {
+        return createInlineKeyboardButton(buttonId, label).setUrl(SELECT_GROUP_URL + buttonId);
     }
 }
