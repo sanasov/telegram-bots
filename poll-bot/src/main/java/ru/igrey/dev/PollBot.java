@@ -111,8 +111,8 @@ public class PollBot extends TelegramLongPollingBot {
                 answer.setText(new MarkDownWrapper().toInlineFixedWidthCode("вы проголосовали"));
                 break;
             case PICKED_ANSWER:
-                vote(message.getFrom().getId().longValue(),
-                        message.getChatId(),
+                vote(update.getCallbackQuery().getFrom().getId().longValue(),
+                        update.getCallbackQuery().getMessage().getChatId(),
                         message.getMessageId(),
                         poll,
                         extractAnswer(query.getData()),
