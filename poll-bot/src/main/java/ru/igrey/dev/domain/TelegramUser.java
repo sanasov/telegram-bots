@@ -2,10 +2,16 @@ package ru.igrey.dev.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import ru.igrey.dev.domain.poll.Poll;
+import ru.igrey.dev.entity.TelegramUserEntity;
+import ru.igrey.dev.statemachine.create.PollExchange;
 import ru.igrey.dev.statemachine.create.PollStateMachine;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,6 +101,50 @@ public class TelegramUser {
         this.status = status;
     }
 
+    public TelegramUserEntity toEntity() {
+        JSONArray pollList = new JSONArray();
+        for (Poll poll : this.myPolls) {
+            pollList.add(poll.toJsonObject());
+        }
+        return new TelegramUserEntity(userId,
+                firstName,
+                lastName,
+                userName,
+                status.toString(),
+                pollList.toJSONString(),
+                null,
+                true);
+    }
+
+    public TelegramUser fromEntity(TelegramUserEntity entity) {
+        JSONParser jsonParser = new JSONParser();
+        JSONArray jsonPoll;
+        try {
+            jsonPoll = (JSONArray) jsonParser.parse(entity.getMyPolls());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        PollStateMachine machine = new PollStateMachine(PollExchange.createNewPollExchange());
+        TelegramUser user = new TelegramUser(
+                entity.getUserId(),
+                entity.getFirstName(),
+                entity.getLastName(),
+                entity.getUserName(),
+                UserProcessStatus.valueOf(entity.getStatus()),
+                pollListFromJson(jsonPoll),
+                machine);
+        machine.setAuthor(user);
+        return user;
+    }
+
+    private static List<Poll> pollListFromJson(JSONArray jsonArrayPolls) {
+        List<Poll> result = new ArrayList<>();
+        Iterator<JSONObject> pollIt = jsonArrayPolls.iterator();
+        while (pollIt.hasNext()) {
+            result.add(Poll.fromJsonObject(pollIt.next()));
+        }
+        return result;
+    }
 
     @Override
     public String toString() {

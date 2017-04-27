@@ -2,11 +2,14 @@ package ru.igrey.dev.domain.poll;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import ru.igrey.dev.Emoji;
 import ru.igrey.dev.MarkDownWrapper;
 import ru.igrey.dev.domain.AnswerOption;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @EqualsAndHashCode(exclude = "author")
@@ -77,4 +80,34 @@ public class Poll {
     private String personVotedView(Integer votedAmount) {
         return !votedAmount.equals(1) ? votedAmount + " persons voted" : " 1 person voted";
     }
+
+    public JSONObject toJsonObject() {
+        JSONArray answers = new JSONArray();
+        for (AnswerOption answerOption : possibleAnswers) {
+            answers.add(answerOption.toJsonObject());
+        }
+        JSONObject poll = new JSONObject();
+        poll.put("pollId", pollId);
+        poll.put("question", question);
+        poll.put("possibleAnswers", answers);
+        return poll;
+    }
+
+    public static Poll fromJsonObject(JSONObject jsonObject) {
+        return new Poll(
+                (String) jsonObject.get("pollId"),
+                (String) jsonObject.get("question"),
+                answerListFromJson((JSONArray) jsonObject.get("possibleAnswers"))
+        );
+    }
+
+    private static List<AnswerOption> answerListFromJson(JSONArray jsonArrayAnswers) {
+        List<AnswerOption> result = new ArrayList<>();
+        Iterator<JSONObject> answerIt = jsonArrayAnswers.iterator();
+        while (answerIt.hasNext()) {
+            result.add(AnswerOption.fromJsonObject(answerIt.next()));
+        }
+        return result;
+    }
+
 }

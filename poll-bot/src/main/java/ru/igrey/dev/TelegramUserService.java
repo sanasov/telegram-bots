@@ -3,6 +3,7 @@ package ru.igrey.dev;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.api.objects.User;
+import ru.igrey.dev.dao.TelegramUserDao;
 import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.UserProcessStatus;
 import ru.igrey.dev.statemachine.create.PollExchange;
@@ -15,6 +16,8 @@ import java.util.List;
  * Created by sanasov on 10.04.2017.
  */
 public class TelegramUserService {
+
+    private TelegramUserDao telegramUserDao;
     private static final Logger logger = LoggerFactory.getLogger(VoteService.class);
     public static List<TelegramUser> telegramUsers = new ArrayList<>();
 

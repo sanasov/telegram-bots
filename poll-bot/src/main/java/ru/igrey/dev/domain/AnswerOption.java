@@ -1,12 +1,17 @@
 package ru.igrey.dev.domain;
 
+import com.sun.deploy.util.StringUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.json.simple.JSONObject;
 import ru.igrey.dev.Emoji;
 import ru.igrey.dev.MarkDownWrapper;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @EqualsAndHashCode
 @ToString
@@ -16,6 +21,11 @@ public class AnswerOption {
 
     public AnswerOption(String answer) {
         this.answer = answer;
+    }
+
+    public AnswerOption(String answer, Set<Long> userIdSet) {
+        this.answer = answer;
+        this.userIdSet = userIdSet;
     }
 
     private String answer;
@@ -68,4 +78,40 @@ public class AnswerOption {
         return persentIndicator;
     }
 
+    public JSONObject toJsonObject() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("answer", answer);
+        jsonObject.put("userIdSet", joinUserIdSetToString());
+        return jsonObject;
+    }
+
+    public static AnswerOption fromJsonObject(JSONObject jsonObject) {
+        return new AnswerOption(
+                (String) jsonObject.get("answer"),
+                splitStringUserIdsToSet((String) jsonObject.get("userIdSet"))
+        );
+    }
+
+    private static Set<Long> splitStringUserIdsToSet(String userIds) {
+        return Arrays.asList(userIds.split(","))
+                .stream()
+                .map(id -> Long.valueOf(id))
+                .collect(Collectors.toSet());
+    }
+
+    private String joinUserIdSetToString() {
+        return StringUtils.join(
+                userIdSet.stream()
+                        .map(id -> id.toString())
+                        .collect(Collectors.toSet()),
+                ",");
+    }
+
+    public static void main(String[] args) {
+        List<Integer> list = Arrays.asList(1, 2, 3, 4);
+        String s = StringUtils.join(list, ",");
+        System.out.println(s);
+        Arrays.asList(s.split(","));
+    }
 }
+
