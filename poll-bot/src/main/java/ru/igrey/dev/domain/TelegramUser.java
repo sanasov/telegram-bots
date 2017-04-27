@@ -116,7 +116,7 @@ public class TelegramUser {
                 true);
     }
 
-    public TelegramUser fromEntity(TelegramUserEntity entity) {
+    public static TelegramUser fromEntity(TelegramUserEntity entity) {
         JSONParser jsonParser = new JSONParser();
         JSONArray jsonPoll;
         try {

@@ -67,9 +67,9 @@ public class TelegramUserDao {
 
     public TelegramUserEntity findById(Long userId) {
         String sql = "SELECT * FROM USER WHERE ID = ?";
-        TelegramUserEntity userEntity = (TelegramUserEntity) jdbcTemplate.queryForObject(
+        List<TelegramUserEntity> userEntities = jdbcTemplate.query(
                 sql, new Object[]{userId}, new TelegramUserMapper());
-        return userEntity;
+        return userEntities.isEmpty() ? null : userEntities.get(0);
     }
 
     public List<TelegramUserEntity> findAll() {
