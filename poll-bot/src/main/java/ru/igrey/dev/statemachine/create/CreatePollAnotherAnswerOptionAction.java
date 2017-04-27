@@ -1,7 +1,7 @@
 package ru.igrey.dev.statemachine.create;
 
 import ru.igrey.dev.ReplyKeyboard;
-import ru.igrey.dev.domain.AnswerOption;
+import ru.igrey.dev.domain.poll.AnswerOption;
 
 import static ru.igrey.dev.statemachine.create.ResponseMessagesInCreatingPollProcess.ANOTHER_ANSWER_ADDED;
 

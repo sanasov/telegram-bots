@@ -1,4 +1,4 @@
-package ru.igrey.dev.domain;
+package ru.igrey.dev.domain.poll;
 
 import org.apache.commons.lang3.StringUtils;
 import lombok.EqualsAndHashCode;
@@ -61,7 +61,7 @@ public class AnswerOption {
     }
 
     private String persentIndicator(Integer total) {
-        Double indicatorLength = MAX_BLACK_SMALL_SQUARE * ((double) votedAmount() / total);
+        Double indicatorLength = MAX_BLACK_SMALL_SQUARE * ((double) votedAmount() / (double) total);
         String persentIndicator = "";
         if (indicatorLength == 0) {
             persentIndicator = Emoji.WHITE_SMALL_SQUARE.toString();
@@ -71,10 +71,15 @@ public class AnswerOption {
             if (i < indicatorLength) {
                 persentIndicator += Emoji.BLACK_SMALL_SQUARE;
             } else {
-                persentIndicator = Emoji.WHITE_SMALL_SQUARE.toString();
+                persentIndicator += Emoji.WHITE_SMALL_SQUARE.toString();
             }
         }
         return persentIndicator;
+    }
+
+    public static void main(String[] args) {
+        AnswerOption answerOpt = new AnswerOption("String answer", new HashSet<>(Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L, 7L)));
+        System.out.println(answerOpt.persentIndicator(20));
     }
 
     public JSONObject toJsonObject() {

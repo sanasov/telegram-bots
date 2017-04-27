@@ -2,7 +2,7 @@ package ru.igrey.dev.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.sqlite.SQLiteDataSource;
-import ru.igrey.dev.domain.AnswerOption;
+import ru.igrey.dev.domain.poll.AnswerOption;
 import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.UserProcessStatus;
 import ru.igrey.dev.domain.poll.Poll;

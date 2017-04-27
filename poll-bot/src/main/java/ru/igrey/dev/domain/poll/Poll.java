@@ -6,7 +6,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import ru.igrey.dev.Emoji;
 import ru.igrey.dev.MarkDownWrapper;
-import ru.igrey.dev.domain.AnswerOption;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -64,10 +63,6 @@ public class Poll {
                 .map(answerOption -> answerOption.view(totalVotedAmount()))
                 .reduce((a, b) -> a + "\n" + b)
                 .get();
-    }
-
-    public String votingView() {
-        return new MarkDownWrapper().toBold(question);
     }
 
     public Integer totalVotedAmount() {

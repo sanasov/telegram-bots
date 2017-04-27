@@ -1,6 +1,6 @@
 package ru.igrey.dev.statemachine.create;
 
-import ru.igrey.dev.domain.AnswerOption;
+import ru.igrey.dev.domain.poll.AnswerOption;
 import ru.igrey.dev.domain.poll.PollStatus;
 
 import static ru.igrey.dev.statemachine.create.ResponseMessagesInCreatingPollProcess.ADD_SECOND_ANSWER;
