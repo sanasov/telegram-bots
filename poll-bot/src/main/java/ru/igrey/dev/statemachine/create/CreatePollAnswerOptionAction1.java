@@ -17,12 +17,12 @@ public class CreatePollAnswerOptionAction1 implements CreatePollAction {
     }
 
     @Override
-    public void applyToPoll(String possibleAnswer) {
+    public PollExchange applyToPoll(String possibleAnswer) {
         PollExchange pollExchange = machine.getPollExchange();
         pollExchange.setStatus(PollStatus.CREATE_ANSWER2);
         pollExchange.setResponseText(ADD_SECOND_ANSWER);
         pollExchange.setReplyKeyboardMarkup(null);
-        machine.setCurrentAction(machine.getAnswerOptionAction2());
         pollExchange.getPoll().addAnswer(new AnswerOption(possibleAnswer));
+        return pollExchange;
     }
 }

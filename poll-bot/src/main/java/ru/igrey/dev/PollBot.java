@@ -15,6 +15,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.UserProcessStatus;
 import ru.igrey.dev.domain.poll.Poll;
+import ru.igrey.dev.statemachine.create.PollExchange;
 import ru.igrey.dev.statemachine.create.PollStateMachine;
 
 import static ru.igrey.dev.CommandBtn.PICKED_ANSWER;
@@ -68,16 +69,15 @@ public class PollBot extends TelegramLongPollingBot {
         TelegramUser telegramUser = telegramUserService.getOrCreateTelegramUserByUserId(incomingMessage.getFrom());
         Long chatId = incomingMessage.getChatId();
         String incomingMessageText = incomingMessage.getText();
-        if (incomingMessageText.equals(KeyboardText.CREATE_POLL)
-                && telegramUser.status() != UserProcessStatus.CREATE_POLL) {
+        if (incomingMessageText.equals(KeyboardText.CREATE_POLL)) {
             telegramUser.setStatus(UserProcessStatus.CREATE_POLL);
         }
 
         if (telegramUser.status() == UserProcessStatus.CREATE_POLL) {
-            PollStateMachine stateMachine = new PollStateMachine(telegramUser.pollExchange());
-            stateMachine.create(incomingMessageText);
-            telegramUser.setPollExchange(stateMachine.getPollExchange());
-            sendTextMessage(chatId, telegramUser.pollExchange().getResponseText(), telegramUser.pollExchange().getReplyKeyboardMarkup());
+            PollStateMachine stateMachine = new PollStateMachine(telegramUser.pollExchange(), telegramUserService);
+            PollExchange pollExchange = stateMachine.apply(incomingMessageText);
+            telegramUser.setPollExchange(pollExchange);
+            sendTextMessage(chatId, pollExchange.getResponseText(), pollExchange.getReplyKeyboardMarkup());
         } else if (KeyboardText.SHOW_CREATED_POLLS.equals(incomingMessageText)) {
             if (telegramUser.myPolls().size() == 0) {
                 sendTextMessage(chatId, "Сейчас нет ни одного опросника. Создайте " + SMILING_FACE_WITH_SMILING_EYES.toString(), ReplyKeyboard.getKeyboardOnUserStart());

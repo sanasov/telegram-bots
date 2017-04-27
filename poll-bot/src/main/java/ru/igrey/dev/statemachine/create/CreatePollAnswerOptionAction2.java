@@ -18,13 +18,13 @@ public class CreatePollAnswerOptionAction2 implements CreatePollAction {
     }
 
     @Override
-    public void applyToPoll(String possibleAnswer) {
+    public PollExchange applyToPoll(String possibleAnswer) {
         PollExchange pollExchange = machine.getPollExchange();
         pollExchange.getPoll().addAnswer(new AnswerOption(possibleAnswer));
         pollExchange.setResponseText(SECOND_ANSWER_ADDED);
         pollExchange.setReplyKeyboardMarkup(ReplyKeyboard.getKeyboardOnCompleteCreatingPoll());
         pollExchange.setStatus(PollStatus.CREATE_ANOTHER_ANSWER);
-        machine.setCurrentAction(machine.getAnswerAnotherOptionAction());
+        return pollExchange;
     }
 
 

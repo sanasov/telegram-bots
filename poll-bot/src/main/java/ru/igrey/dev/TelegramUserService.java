@@ -31,7 +31,7 @@ public class TelegramUserService {
                 .orElse(null);
         if (result == null) {
             result = createTelegramUser(user);
-            telegramUserDao.save(result.toEntity());
+            saveTelegramUser(result);
             telegramUsers.add(result);
         }
         return result;
@@ -51,5 +51,9 @@ public class TelegramUserService {
         pollExchange.setAuthor(telegramUser);
         logger.info("created user " + telegramUser);
         return telegramUser;
+    }
+
+    public void saveTelegramUser(TelegramUser author) {
+        telegramUserDao.save(author.toEntity());
     }
 }

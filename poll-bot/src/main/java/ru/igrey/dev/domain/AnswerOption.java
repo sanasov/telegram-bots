@@ -92,6 +92,9 @@ public class AnswerOption {
     }
 
     private static Set<Long> splitStringUserIdsToSet(String userIds) {
+        if (userIds.isEmpty()) {
+            return new HashSet<>();
+        }
         return Arrays.asList(userIds.split(","))
                 .stream()
                 .map(id -> Long.valueOf(id))

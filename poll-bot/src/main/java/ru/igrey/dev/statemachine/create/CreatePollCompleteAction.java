@@ -3,7 +3,10 @@ package ru.igrey.dev.statemachine.create;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.igrey.dev.ReplyKeyboard;
+import ru.igrey.dev.domain.poll.Poll;
 import ru.igrey.dev.domain.poll.PollStatus;
+
+import static ru.igrey.dev.statemachine.create.ResponseMessagesInCreatingPollProcess.POLL_CREATED;
 
 /**
  * Created by sanasov on 04.04.2017.
@@ -18,12 +21,11 @@ public class CreatePollCompleteAction implements CreatePollAction {
     }
 
     @Override
-    public void applyToPoll(String possibleAnswer) {
-        PollExchange pollExchange = machine.getPollExchange();
-        machine.setCurrentAction(machine.getNewPollAction());
-        pollExchange.setStatus(PollStatus.NEW);
-        pollExchange.setReplyKeyboardMarkup(ReplyKeyboard.getKeyboardOnUserStart());
-        logger.info(machine.getAuthor() + " created new poll " + pollExchange.getPoll().getPollId());
+    public PollExchange applyToPoll(String possibleAnswer) {
+        logger.info(machine.getPollExchange().getAuthor() + " poll created " + machine.getPollExchange().getPoll().getPollId());
+        PollExchange newPollExchange = new PollExchange(new Poll(String.valueOf(System.currentTimeMillis())), ReplyKeyboard.getKeyboardOnUserStart(), POLL_CREATED, PollStatus.NEW);
+        newPollExchange.setAuthor(machine.getPollExchange().getAuthor());
+        return newPollExchange;
     }
 
 }

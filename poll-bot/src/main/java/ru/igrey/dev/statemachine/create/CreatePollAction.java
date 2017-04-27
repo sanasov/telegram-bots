@@ -5,6 +5,6 @@ package ru.igrey.dev.statemachine.create;
  */
 public interface CreatePollAction {
 
-    void applyToPoll(String incomingText);
+    PollExchange applyToPoll(String incomingText);
 
 }
