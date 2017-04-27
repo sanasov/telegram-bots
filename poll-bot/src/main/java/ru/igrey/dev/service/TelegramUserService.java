@@ -1,4 +1,4 @@
-package ru.igrey.dev;
+package ru.igrey.dev.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ import java.util.List;
 public class TelegramUserService {
 
     private TelegramUserDao telegramUserDao;
-    private static final Logger logger = LoggerFactory.getLogger(VoteService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TelegramUserService.class);
     public static List<TelegramUser> telegramUsers = new ArrayList<>();
 
     public TelegramUserService(TelegramUserDao telegramUserDao) {

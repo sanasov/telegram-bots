@@ -15,6 +15,9 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.UserProcessStatus;
 import ru.igrey.dev.domain.poll.Poll;
+import ru.igrey.dev.service.PollService;
+import ru.igrey.dev.service.TelegramUserService;
+import ru.igrey.dev.service.VoteService;
 import ru.igrey.dev.statemachine.create.PollExchange;
 import ru.igrey.dev.statemachine.create.PollStateMachine;
 
@@ -62,7 +65,7 @@ public class PollBot extends TelegramLongPollingBot {
                 message.getText()
                         .replace("/start@SeanPollBot ", "")
         );
-        sendButtonMessage(message.getChatId(), poll.toView(), ReplyKeyboard.buttonsForPollViewInGroupChat(poll.getPollId()));
+        sendButtonMessage(message.getChatId(), poll.toView(), ReplyKeyboard.pollAnswersButtons(poll));
     }
 
     private void handlePrivateIncomingMessage(Message incomingMessage) {
@@ -110,7 +113,6 @@ public class PollBot extends TelegramLongPollingBot {
                 break;
             case VOTE:
                 showVoteMode(message.getChatId(), message.getMessageId(), poll);
-                answer.setText(new MarkDownWrapper().toInlineFixedWidthCode("вы проголосовали"));
                 break;
             case PICKED_ANSWER:
                 vote(update.getCallbackQuery().getFrom().getId().longValue(),
@@ -119,6 +121,8 @@ public class PollBot extends TelegramLongPollingBot {
                         poll,
                         extractAnswer(query.getData()),
                         message.getChat().isGroupChat());
+                answer.setText(new MarkDownWrapper().toInlineFixedWidthCode("вы проголосовали"));
+                pollService.savePoll(query.getFrom().getId().longValue());
                 break;
         }
         try {
@@ -134,13 +138,13 @@ public class PollBot extends TelegramLongPollingBot {
     }
 
     private void showVoteMode(Long chatId, Integer messageId, Poll poll) {
-        editMessage(chatId, messageId, poll.votingView(), ReplyKeyboard.pollAnswersButtons(poll));
+        editMessage(chatId, messageId, poll.toView(), ReplyKeyboard.pollAnswersButtons(poll));
     }
 
     private void vote(Long userId, Long chatId, Integer messageId, Poll poll, String answer, boolean isGroupChat) {
         new VoteService(userId, poll, answer).vote();
         if (isGroupChat) {
-            showResultInGroupChat(chatId, messageId, poll);
+            showVoteMode(chatId, messageId, poll);
         } else {
             showResultInOwnChat(chatId, messageId, poll);
         }
@@ -194,7 +198,7 @@ public class PollBot extends TelegramLongPollingBot {
         try {
             sendMessage(sendMessage);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 
@@ -209,7 +213,7 @@ public class PollBot extends TelegramLongPollingBot {
         try {
             editMessageText(editMessageText);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 

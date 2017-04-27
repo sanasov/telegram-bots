@@ -6,6 +6,8 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.igrey.dev.dao.JdbcTemplateFactory;
 import ru.igrey.dev.dao.TelegramUserDao;
 import ru.igrey.dev.domain.TelegramUser;
+import ru.igrey.dev.service.PollService;
+import ru.igrey.dev.service.TelegramUserService;
 
 import java.util.stream.Collectors;
 

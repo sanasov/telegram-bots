@@ -1,4 +1,4 @@
-package ru.igrey.dev;
+package ru.igrey.dev.service;
 
 import ru.igrey.dev.dao.TelegramUserDao;
 import ru.igrey.dev.domain.TelegramUser;
@@ -39,4 +39,11 @@ public class PollService {
         telegramUserDao.update(user.toEntity());
     }
 
+    public void savePoll(Long chatId) {
+        TelegramUser user = TelegramUserService.telegramUsers.stream()
+                .filter(telegramUser -> telegramUser.userId().equals(chatId))
+                .findFirst()
+                .get();
+        telegramUserDao.save(user.toEntity());
+    }
 }

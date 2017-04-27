@@ -1,6 +1,6 @@
 package ru.igrey.dev.statemachine.create;
 
-import ru.igrey.dev.TelegramUserService;
+import ru.igrey.dev.service.TelegramUserService;
 import ru.igrey.dev.domain.UserProcessStatus;
 
 import static ru.igrey.dev.KeyboardText.COMPLETE_CREATE_POLL;

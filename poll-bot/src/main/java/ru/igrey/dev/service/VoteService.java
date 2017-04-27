@@ -1,4 +1,4 @@
-package ru.igrey.dev;
+package ru.igrey.dev.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
