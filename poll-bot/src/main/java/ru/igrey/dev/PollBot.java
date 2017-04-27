@@ -121,7 +121,7 @@ public class PollBot extends TelegramLongPollingBot {
                         poll,
                         extractAnswer(query.getData()),
                         message.getChat().isGroupChat());
-                answer.setText(new MarkDownWrapper().toInlineFixedWidthCode("вы проголосовали"));
+                answer.setText("вы проголосовали");
                 pollService.savePoll(query.getFrom().getId().longValue());
                 break;
         }
