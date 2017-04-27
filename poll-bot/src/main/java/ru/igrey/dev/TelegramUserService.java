@@ -21,6 +21,10 @@ public class TelegramUserService {
     private static final Logger logger = LoggerFactory.getLogger(VoteService.class);
     public static List<TelegramUser> telegramUsers = new ArrayList<>();
 
+    public TelegramUserService(TelegramUserDao telegramUserDao) {
+        this.telegramUserDao = telegramUserDao;
+    }
+
     public TelegramUser getOrCreateTelegramUserByUserId(User user) {
         TelegramUser result = telegramUsers.stream()
                 .filter(u -> u.userId().equals(user.getId().longValue()))
@@ -28,6 +32,7 @@ public class TelegramUserService {
                 .orElse(null);
         if (result == null) {
             result = createTelegramUser(user);
+            telegramUserDao.save(result.toEntity());
             telegramUsers.add(result);
         }
         return result;

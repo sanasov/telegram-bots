@@ -1,5 +1,6 @@
 package ru.igrey.dev;
 
+import ru.igrey.dev.dao.TelegramUserDao;
 import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.poll.Poll;
 
@@ -10,6 +11,11 @@ import java.util.Collection;
  */
 public class PollService {
 
+    TelegramUserDao telegramUserDao;
+
+    public PollService(TelegramUserDao telegramUserDao) {
+        this.telegramUserDao = telegramUserDao;
+    }
 
     public Poll findPollById(String id) {
         return TelegramUserService.telegramUsers.stream()
@@ -30,6 +36,7 @@ public class PollService {
                 .findAny()
                 .get();
         user.myPolls().remove(poll);
+        telegramUserDao.update(user.toEntity());
     }
 
 }

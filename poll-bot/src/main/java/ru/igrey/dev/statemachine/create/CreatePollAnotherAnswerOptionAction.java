@@ -37,6 +37,7 @@ public class CreatePollAnotherAnswerOptionAction implements CreatePollAction {
         PollExchange pollExchange = machine.getPollExchange();
         pollExchange.setStatus(PollStatus.NEW);
         machine.getAuthor().myPolls().add(pollExchange.getPoll());
+        machine.getTelegramUserDao().save(machine.getAuthor().toEntity());
         pollExchange.setResponseText(POLL_CREATED);
         pollExchange.setReplyKeyboardMarkup(ReplyKeyboard.getKeyboardOnUserStart());
         machine.getAuthor().changeStatus(START);

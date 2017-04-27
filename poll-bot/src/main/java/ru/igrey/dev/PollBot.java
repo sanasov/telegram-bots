@@ -28,15 +28,16 @@ public class PollBot extends TelegramLongPollingBot {
 
     private static final Logger logger = LoggerFactory.getLogger(PollBot.class);
     private PollService pollService;
+    private TelegramUserService telegramUserService;
 
 
-    public PollBot(PollService pollService) {
+    public PollBot(PollService pollService, TelegramUserService telegramUserService) {
         this.pollService = pollService;
+        this.telegramUserService = telegramUserService;
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-
         if (update.hasMessage()) {
             handleIncomingMessage(update.getMessage());
         } else if (update.hasCallbackQuery()) {
@@ -64,7 +65,7 @@ public class PollBot extends TelegramLongPollingBot {
     }
 
     private void handlePrivateIncomingMessage(Message incomingMessage) {
-        TelegramUser telegramUser = new TelegramUserService().getOrCreateTelegramUserByUserId(incomingMessage.getFrom());
+        TelegramUser telegramUser = telegramUserService.getOrCreateTelegramUserByUserId(incomingMessage.getFrom());
         Long chatId = incomingMessage.getChatId();
         String incomingMessageText = incomingMessage.getText();
         if (incomingMessageText.equals(KeyboardText.CREATE_POLL)
