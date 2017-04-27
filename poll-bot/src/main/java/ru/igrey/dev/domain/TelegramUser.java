@@ -8,7 +8,6 @@ import org.json.simple.parser.JSONParser;
 import ru.igrey.dev.domain.poll.Poll;
 import ru.igrey.dev.entity.TelegramUserEntity;
 import ru.igrey.dev.statemachine.create.PollExchange;
-import ru.igrey.dev.statemachine.create.PollStateMachine;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,16 +23,16 @@ public class TelegramUser {
     private String userName;
     private UserProcessStatus status;
     private List<Poll> myPolls;
-    private PollStateMachine pollMachine;
+    private PollExchange pollExchange;
 
-    public TelegramUser(Long userId, String firstName, String lastName, String userName, UserProcessStatus status, List<Poll> myPolls, PollStateMachine pollMachine) {
+    public TelegramUser(Long userId, String firstName, String lastName, String userName, UserProcessStatus status, List<Poll> myPolls, PollExchange pollExchange) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
         this.status = status;
         this.myPolls = myPolls;
-        this.pollMachine = pollMachine;
+        this.pollExchange = pollExchange;
     }
 
 
@@ -44,7 +43,7 @@ public class TelegramUser {
                 userName,
                 status,
                 myPolls,
-                pollMachine
+                pollExchange
         );
     }
 
@@ -93,8 +92,12 @@ public class TelegramUser {
 
     }
 
-    public PollStateMachine pollMachine() {
-        return pollMachine;
+    public PollExchange pollExchange() {
+        return pollExchange;
+    }
+
+    public void setPollExchange(PollExchange pollExchange) {
+        this.pollExchange = pollExchange;
     }
 
     public void changeStatus(UserProcessStatus status) {
@@ -124,7 +127,7 @@ public class TelegramUser {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        PollStateMachine machine = new PollStateMachine(PollExchange.createNewPollExchange());
+        PollExchange pollExchange = PollExchange.createNewPollExchange();
         TelegramUser user = new TelegramUser(
                 entity.getUserId(),
                 entity.getFirstName(),
@@ -132,8 +135,9 @@ public class TelegramUser {
                 entity.getUserName(),
                 UserProcessStatus.valueOf(entity.getStatus()),
                 pollListFromJson(jsonPoll),
-                machine);
-        machine.setAuthor(user);
+                pollExchange
+                );
+        pollExchange.setAuthor(user);
         return user;
     }
 

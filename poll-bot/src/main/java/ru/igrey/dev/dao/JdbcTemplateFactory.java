@@ -7,7 +7,6 @@ import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.UserProcessStatus;
 import ru.igrey.dev.domain.poll.Poll;
 import ru.igrey.dev.statemachine.create.PollExchange;
-import ru.igrey.dev.statemachine.create.PollStateMachine;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class JdbcTemplateFactory {
     }
 
     private static TelegramUser createTelegramUser() {
-        PollStateMachine machine = new PollStateMachine(PollExchange.createNewPollExchange());
+        PollExchange pollExchange = PollExchange.createNewPollExchange();
         TelegramUser telegramUser = new TelegramUser(
                 11L,
                 "user.getFirstName()",
@@ -44,9 +43,9 @@ public class JdbcTemplateFactory {
                 "user.getUserName()",
                 UserProcessStatus.START,
                 new ArrayList<>(),
-                machine
+                pollExchange
         );
-        machine.setAuthor(telegramUser);
+        pollExchange.setAuthor(telegramUser);
         telegramUser.myPolls().addAll(createPolls());
         return telegramUser;
     }

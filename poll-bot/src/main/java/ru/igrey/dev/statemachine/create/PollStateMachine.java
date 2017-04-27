@@ -1,6 +1,5 @@
 package ru.igrey.dev.statemachine.create;
 
-import ru.igrey.dev.dao.TelegramUserDao;
 import ru.igrey.dev.domain.TelegramUser;
 
 /**
@@ -19,7 +18,6 @@ public class PollStateMachine {
 
     private PollExchange pollExchange;
     private TelegramUser author;
-    private TelegramUserDao telegramUserDao;
 
 
     public PollStateMachine(PollExchange pollExchange) {
@@ -67,15 +65,6 @@ public class PollStateMachine {
     }
 
     //getter setter
-
-
-    public TelegramUserDao getTelegramUserDao() {
-        return telegramUserDao;
-    }
-
-    public void setTelegramUserDao(TelegramUserDao telegramUserDao) {
-        this.telegramUserDao = telegramUserDao;
-    }
 
     public CreatePollAction getAnswerOptionAction1() {
         return answerOptionAction1;

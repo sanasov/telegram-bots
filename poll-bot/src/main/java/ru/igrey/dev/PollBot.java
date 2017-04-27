@@ -15,7 +15,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.UserProcessStatus;
 import ru.igrey.dev.domain.poll.Poll;
-import ru.igrey.dev.statemachine.create.PollExchange;
+import ru.igrey.dev.statemachine.create.PollStateMachine;
 
 import static ru.igrey.dev.CommandBtn.PICKED_ANSWER;
 import static ru.igrey.dev.CommandBtn.POST_POLL;
@@ -74,9 +74,10 @@ public class PollBot extends TelegramLongPollingBot {
         }
 
         if (telegramUser.status() == UserProcessStatus.CREATE_POLL) {
-            telegramUser.pollMachine().create(incomingMessageText);
-            PollExchange pollExchange = telegramUser.pollMachine().getPollExchange();
-            sendTextMessage(chatId, pollExchange.getResponseText(), pollExchange.getReplyKeyboardMarkup());
+            PollStateMachine stateMachine = new PollStateMachine(telegramUser.pollExchange());
+            stateMachine.create(incomingMessageText);
+            telegramUser.setPollExchange(stateMachine.getPollExchange());
+            sendTextMessage(chatId, telegramUser.pollExchange().getResponseText(), telegramUser.pollExchange().getReplyKeyboardMarkup());
         } else if (KeyboardText.SHOW_CREATED_POLLS.equals(incomingMessageText)) {
             if (telegramUser.myPolls().size() == 0) {
                 sendTextMessage(chatId, "Сейчас нет ни одного опросника. Создайте " + SMILING_FACE_WITH_SMILING_EYES.toString(), ReplyKeyboard.getKeyboardOnUserStart());

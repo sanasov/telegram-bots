@@ -7,7 +7,6 @@ import ru.igrey.dev.dao.TelegramUserDao;
 import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.UserProcessStatus;
 import ru.igrey.dev.statemachine.create.PollExchange;
-import ru.igrey.dev.statemachine.create.PollStateMachine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +38,7 @@ public class TelegramUserService {
     }
 
     private TelegramUser createTelegramUser(User user) {
-        PollStateMachine machine = new PollStateMachine(PollExchange.createNewPollExchange());
+        PollExchange pollExchange = PollExchange.createNewPollExchange();
         TelegramUser telegramUser = new TelegramUser(
                 user.getId().longValue(),
                 user.getFirstName(),
@@ -47,9 +46,9 @@ public class TelegramUserService {
                 user.getUserName(),
                 UserProcessStatus.START,
                 new ArrayList<>(),
-                machine
+                pollExchange
         );
-        machine.setAuthor(telegramUser);
+        pollExchange.setAuthor(telegramUser);
         logger.info("created user " + telegramUser);
         return telegramUser;
     }

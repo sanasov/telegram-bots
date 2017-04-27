@@ -1,6 +1,7 @@
 package ru.igrey.dev.statemachine.create;
 
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.poll.Poll;
 import ru.igrey.dev.domain.poll.PollStatus;
 
@@ -14,6 +15,7 @@ public class PollExchange {
     private ReplyKeyboardMarkup replyKeyboardMarkup;
     private String responseText;
     private PollStatus status;
+    private TelegramUser author;
 
 
     public PollExchange() {
@@ -63,5 +65,13 @@ public class PollExchange {
 
     public void setStatus(PollStatus status) {
         this.status = status;
+    }
+
+    public TelegramUser getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(TelegramUser author) {
+        this.author = author;
     }
 }

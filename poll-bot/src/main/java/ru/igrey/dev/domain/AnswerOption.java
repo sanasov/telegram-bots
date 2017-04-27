@@ -1,6 +1,6 @@
 package ru.igrey.dev.domain;
 
-import com.sun.deploy.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.json.simple.JSONObject;
@@ -9,7 +9,6 @@ import ru.igrey.dev.MarkDownWrapper;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -100,18 +99,12 @@ public class AnswerOption {
     }
 
     private String joinUserIdSetToString() {
-        return StringUtils.join(
+        return userIdSet().isEmpty() ? "" : StringUtils.join(
                 userIdSet.stream()
                         .map(id -> id.toString())
                         .collect(Collectors.toSet()),
                 ",");
     }
 
-    public static void main(String[] args) {
-        List<Integer> list = Arrays.asList(1, 2, 3, 4);
-        String s = StringUtils.join(list, ",");
-        System.out.println(s);
-        Arrays.asList(s.split(","));
-    }
 }
 
