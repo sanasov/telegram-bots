@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @ToString
 public class AnswerOption {
 
-    private final static Integer MAX_BLACK_SMALL_SQUARE = 8;
+    private final static Integer MAX_BLACK_SMALL_SQUARE = 10;
 
     public AnswerOption(String answer) {
         this.answer = answer;
