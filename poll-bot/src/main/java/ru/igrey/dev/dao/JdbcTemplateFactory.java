@@ -2,9 +2,9 @@ package ru.igrey.dev.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.sqlite.SQLiteDataSource;
-import ru.igrey.dev.domain.poll.AnswerOption;
 import ru.igrey.dev.domain.TelegramUser;
 import ru.igrey.dev.domain.UserProcessStatus;
+import ru.igrey.dev.domain.poll.AnswerOption;
 import ru.igrey.dev.domain.poll.Poll;
 import ru.igrey.dev.statemachine.create.PollExchange;
 
@@ -18,9 +18,11 @@ import java.util.List;
  * Created by sanasov on 26.04.2017.
  */
 public class JdbcTemplateFactory {
+
     public JdbcTemplate create() {
+        String url = "jdbc:sqlite:/" + DirectoryInfo.getDirectoryTargetScripts() + "botdb.s3db";
         SQLiteDataSource sqLiteDataSource = new SQLiteDataSource();
-        sqLiteDataSource.setUrl("jdbc:sqlite:C:/trainings/sqlite/botdb.s3db");
+        sqLiteDataSource.setUrl(url);
         sqLiteDataSource.setDatabaseName("botdb");
         return new JdbcTemplate(sqLiteDataSource);
     }
