@@ -35,18 +35,6 @@ public class TelegramUser {
         this.pollExchange = pollExchange;
     }
 
-
-    public TelegramUser toNewStatus(UserProcessStatus status) {
-        return new TelegramUser(userId,
-                firstName,
-                lastName,
-                userName,
-                status,
-                myPolls,
-                pollExchange
-        );
-    }
-
     public void setStatus(UserProcessStatus status) {
         this.status = status;
     }

@@ -63,16 +63,16 @@ public class ReplyKeyboard {
     }
 
 
-    public static InlineKeyboardMarkup buttonsForPollViewInGroupChat(String pollId) {
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-        List<InlineKeyboardButton> buttonRow = new ArrayList<>();
-        buttonRow.add(createInlineKeyboardButton(VOTE.nameWithDelimeter() + pollId, VOTE.title()));
-        buttonRow.add(createPublishPollButton(pollId, POST_POLL.title()));
-        keyboard.add(buttonRow);
-        markup.setKeyboard(keyboard);
-        return markup;
-    }
+//    public static InlineKeyboardMarkup buttonsForPollViewInGroupChat(String pollId) {
+//        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+//        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+//        List<InlineKeyboardButton> buttonRow = new ArrayList<>();
+//        buttonRow.add(createInlineKeyboardButton(VOTE.nameWithDelimeter() + pollId, VOTE.title()));
+//        buttonRow.add(createPublishPollButton(pollId, POST_POLL.title()));
+//        keyboard.add(buttonRow);
+//        markup.setKeyboard(keyboard);
+//        return markup;
+//    }
 
     public static InlineKeyboardMarkup buttonsForPollViewInOwnUserChat(String pollId) {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
@@ -112,7 +112,7 @@ public class ReplyKeyboard {
         return btn;
     }
 
-    private static InlineKeyboardButton createPublishPollButton(String buttonId, String label) {
-        return createInlineKeyboardButton(buttonId, label).setUrl(SELECT_GROUP_URL + buttonId);
+    private static InlineKeyboardButton createPublishPollButton(String pollId, String label) {
+        return createInlineKeyboardButton(pollId, label).setUrl(SELECT_GROUP_URL + pollId);
     }
 }

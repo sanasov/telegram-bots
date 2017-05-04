@@ -45,7 +45,7 @@ public class PollBot extends TelegramLongPollingBot {
         if (update.hasMessage()) {
             handleIncomingMessage(update.getMessage());
         } else if (update.hasCallbackQuery()) {
-            handleButtonClick(update);
+            handleButtonClick(update.getCallbackQuery());
         }
     }
 
@@ -97,8 +97,7 @@ public class PollBot extends TelegramLongPollingBot {
         }
     }
 
-    private void handleButtonClick(Update update) {
-        CallbackQuery query = update.getCallbackQuery();
+    private void handleButtonClick(CallbackQuery query) {
         AnswerCallbackQuery answer = new AnswerCallbackQuery();
         answer.setCallbackQueryId(query.getId());
         Poll poll = pollService.findPollById(extractPollId(query.getData()));
@@ -115,8 +114,8 @@ public class PollBot extends TelegramLongPollingBot {
                 showVoteMode(message.getChatId(), message.getMessageId(), poll);
                 break;
             case PICKED_ANSWER:
-                vote(update.getCallbackQuery().getFrom().getId().longValue(),
-                        update.getCallbackQuery().getMessage().getChatId(),
+                vote(query.getFrom().getId().longValue(),
+                        query.getMessage().getChatId(),
                         message.getMessageId(),
                         poll,
                         extractAnswer(query.getData()),
@@ -155,9 +154,9 @@ public class PollBot extends TelegramLongPollingBot {
     }
 
 
-    private void showResultInGroupChat(Long chatId, Integer messageId, Poll poll) {
-        editMessage(chatId, messageId, poll.toView(), ReplyKeyboard.buttonsForPollViewInGroupChat(poll.getPollId()));
-    }
+//    private void showResultInGroupChat(Long chatId, Integer messageId, Poll poll) {
+//        editMessage(chatId, messageId, poll.toView(), ReplyKeyboard.buttonsForPollViewInGroupChat(poll.getPollId()));
+//    }
 
 
     private String extractPollId(String data) {
