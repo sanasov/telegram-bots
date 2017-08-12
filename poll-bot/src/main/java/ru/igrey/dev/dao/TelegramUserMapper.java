@@ -11,6 +11,7 @@ import java.sql.SQLException;
  */
 public class TelegramUserMapper implements RowMapper
 {
+    @Override
     public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
         TelegramUserEntity user = new TelegramUserEntity();
         user.setUserId(rs.getLong("ID"));
